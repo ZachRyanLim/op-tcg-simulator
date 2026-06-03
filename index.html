@@ -82,14 +82,66 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
 .modal p{font-size:13px;color:var(--tx2);line-height:1.6;margin-bottom:4px}
 .mbtns{display:flex;gap:9px;justify-content:flex-end;margin-top:18px}
 
-/* ── TOAST ── */
-#toast{position:fixed;top:18px;right:18px;z-index:9000;display:flex;flex-direction:column;gap:7px;pointer-events:none}
-.tst{background:var(--bg3);border:1px solid var(--bdr2);border-radius:var(--r2);
-  padding:10px 16px;font-size:13px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.5);
-  animation:tstin .2s ease;max-width:280px}
-.tst.ok{border-color:rgba(58,184,122,.4);color:var(--green)}
-.tst.err{border-color:rgba(232,49,42,.4);color:var(--red2)}
+/* ── GLOBAL TOAST (non-gameplay: auth, save, copy etc.) ── */
+#toast{
+  position:fixed;top:18px;right:18px;z-index:9000;
+  display:flex;flex-direction:column;gap:7px;pointer-events:none;
+}
+.tst{
+  background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r2);
+  padding:10px 16px;font-size:13px;font-weight:700;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+  animation:tstin .25s ease;max-width:300px;
+  transition:opacity .3s,transform .3s;
+}
+.tst.ok{background:rgba(15,35,20,.95);border-color:rgba(58,184,122,.5);color:var(--green)}
+.tst.err{background:rgba(35,10,10,.95);border-color:rgba(232,49,42,.5);color:var(--red2)}
+.tst.fading{opacity:0;transform:translateX(20px)}
 @keyframes tstin{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+
+/* ── IN-MAT GAMEPLAY NOTIFICATION BAR ── */
+#game-notify{
+  position:absolute;
+  bottom:100%;left:0;right:0;
+  z-index:50;
+  display:flex;flex-direction:column;gap:4px;
+  padding:0 10px 6px;
+  pointer-events:none;
+}
+.gn-msg{
+  border-radius:var(--r);
+  padding:9px 14px;
+  font-size:13px;font-weight:800;
+  letter-spacing:.02em;
+  display:flex;align-items:center;gap:8px;
+  animation:gnIn .2s ease;
+  box-shadow:0 4px 16px rgba(0,0,0,.5);
+  backdrop-filter:blur(8px);
+  transition:opacity .35s,transform .35s;
+}
+.gn-msg.gn-err{
+  background:rgba(100,5,5,.92);
+  border:1px solid rgba(232,49,42,.6);
+  color:#fecaca;
+}
+.gn-msg.gn-ok{
+  background:rgba(5,40,20,.92);
+  border:1px solid rgba(58,184,122,.5);
+  color:#bbf7d0;
+}
+.gn-msg.gn-info{
+  background:rgba(5,20,60,.92);
+  border:1px solid rgba(58,143,232,.45);
+  color:#bfdbfe;
+}
+.gn-msg.gn-warn{
+  background:rgba(60,40,5,.92);
+  border:1px solid rgba(245,158,11,.45);
+  color:#fde68a;
+}
+.gn-msg.fading{opacity:0;transform:translateY(-6px)}
+.gn-icon{font-size:16px;flex-shrink:0}
+@keyframes gnIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* ── LOADING OVERLAY ── */
 #loadov{position:fixed;inset:0;z-index:800;display:none;
@@ -804,7 +856,7 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
 /* Body: 3-column grid */
 .db-body{
   flex:1;display:grid;
-  grid-template-columns:240px 1fr 220px;
+  grid-template-columns:220px 1fr 260px;
   min-height:0;overflow:hidden;
   position:relative;z-index:1;
 }
@@ -903,7 +955,7 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
   flex:1;overflow-y:auto;
   padding:14px;
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(82px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
   gap:10px;
   align-content:start;
 }
@@ -918,7 +970,7 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
 }
 .bcard:hover{transform:translateY(-3px) scale(1.04);border-color:rgba(255,255,255,.25);
   box-shadow:0 8px 20px rgba(0,0,0,.5)}
-.bcard-img{width:100%;aspect-ratio:5/7;object-fit:cover;display:block}
+.bcard-img{width:100%;aspect-ratio:5/7;object-fit:cover;display:block;min-height:100px}
 .bcard-qty{position:absolute;top:4px;right:4px;background:var(--gold);color:#1a1200;
   font-size:11px;font-weight:900;width:20px;height:20px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;z-index:2}
@@ -1035,6 +1087,178 @@ input[type=range]#vol-slider::-moz-range-thumb{
 .mc-vol-pct{font-size:10px;color:var(--tx3);font-weight:700;width:28px;text-align:right;flex-shrink:0}
 /* Hidden YouTube iframe */
 #yt-iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px}
+
+
+/* ════════════════════════════════════════
+   GLOBAL GEAR / SETTINGS BUTTON
+════════════════════════════════════════ */
+#gear-btn{
+  position:fixed;
+  top:10px; left:10px;
+  z-index:8500;
+  width:36px; height:36px;
+  border-radius:50%;
+  background:rgba(7,9,15,.82);
+  border:1px solid rgba(255,255,255,.12);
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; cursor:pointer;
+  backdrop-filter:blur(10px);
+  transition:all .2s;
+  box-shadow:0 2px 10px rgba(0,0,0,.4);
+  user-select:none;
+}
+#gear-btn:hover{
+  background:rgba(245,200,66,.15);
+  border-color:rgba(245,200,66,.5);
+  transform:rotate(45deg);
+}
+
+/* ════════════════════════════════════════
+   SETTINGS MODAL COMPONENTS
+════════════════════════════════════════ */
+.stg-section{
+  margin-bottom:20px;
+  padding-bottom:18px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.stg-section:last-of-type{border-bottom:none;margin-bottom:8px}
+.stg-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:800;
+  letter-spacing:.07em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;
+}
+.stg-desc{font-size:12px;color:var(--tx3);margin-bottom:10px}
+.stg-options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.stg-opt{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--r2);padding:12px 10px;
+  cursor:pointer;transition:all .15s;text-align:center;
+  background:rgba(255,255,255,.03);
+}
+.stg-opt:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06)}
+.stg-opt.on{border-color:var(--gold);background:rgba(245,200,66,.1)}
+.stg-opt-icon{font-size:22px;margin-bottom:5px}
+.stg-opt-label{font-size:12px;font-weight:800;color:var(--tx);margin-bottom:3px}
+.stg-opt.on .stg-opt-label{color:var(--gold)}
+.stg-opt-desc{font-size:10px;color:var(--tx3);line-height:1.4}
+.stg-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.stg-row:last-child{border-bottom:none}
+.stg-row-info{flex:1}
+.stg-row-label{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:2px}
+.stg-row-desc{font-size:11px;color:var(--tx3)}
+
+/* ════════════════════════════════════════
+   FLOATING ZOOM WINDOW
+════════════════════════════════════════ */
+#zoom-window{
+  position:fixed;
+  z-index:700;
+  display:none;
+  flex-direction:column;
+  gap:0;
+  width:300px;
+  background:var(--bg2);
+  border:1px solid var(--bdr2);
+  border-radius:var(--r3);
+  overflow:hidden;
+  box-shadow:0 12px 40px rgba(0,0,0,.7);
+  pointer-events:all;
+  animation:zwIn .15s ease;
+}
+@keyframes zwIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+#zoom-window #zw-img{width:100%;display:block;aspect-ratio:5/7;object-fit:cover}
+#zoom-window #zw-info{padding:12px 14px;display:flex;flex-direction:column;gap:5px}
+.zw-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;color:var(--tx)}
+.zw-badges{display:flex;gap:5px;flex-wrap:wrap}
+.zw-stats{font-size:12px;color:var(--tx2);font-weight:700;display:flex;gap:10px;flex-wrap:wrap}
+.zw-stats b{color:var(--gold)}
+.zw-eff{font-size:11px;color:#93c5fd;line-height:1.6;border-top:1px solid rgba(255,255,255,.06);padding-top:7px}
+
+
+/* ── Turn Banner ── */
+#turn-banner{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:600;pointer-events:none;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  animation:tbIn .35s ease forwards;
+}
+#turn-banner.show{display:flex}
+#turn-banner-text{
+  font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:.1em;
+  color:#fff;text-shadow:0 0 40px rgba(245,200,66,.8),0 4px 0 rgba(0,0,0,.6);
+  padding:16px 40px;border-radius:var(--r3);
+  background:rgba(7,9,15,.82);border:2px solid var(--gold);
+  backdrop-filter:blur(12px);
+}
+#turn-banner-sub{
+  font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tx2);margin-top:8px;
+}
+@keyframes tbIn{
+  0%{opacity:0;transform:translate(-50%,-60%) scale(.85)}
+  60%{opacity:1;transform:translate(-50%,-50%) scale(1.04)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+}
+
+/* ── Phase change flash ── */
+.ppill.on{
+  background:var(--gold);color:#1a1200;border-color:var(--gold);
+  font-weight:900;box-shadow:0 0 14px rgba(245,200,66,.5);
+  animation:phasePulse .4s ease;
+}
+@keyframes phasePulse{
+  0%{transform:scale(.9)}50%{transform:scale(1.1)}100%{transform:scale(1)}
+}
+
+/* ── DON!! tooltip on button ── */
+.abtn[title]:hover::after{
+  content:attr(title);
+  position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);
+  background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r);
+  padding:5px 10px;font-size:11px;color:var(--tx);white-space:nowrap;
+  pointer-events:none;z-index:100;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);
+}
+.apanel{position:relative}
+
+/* ── Selected card highlight LABEL ── */
+.cf.sel::after{
+  content:'SELECTED';position:absolute;bottom:28px;left:50%;
+  transform:translateX(-50%);
+  font-size:8px;font-weight:900;letter-spacing:.06em;
+  background:var(--gold);color:#1a1200;
+  padding:1px 5px;border-radius:3px;z-index:5;pointer-events:none;
+  white-space:nowrap;
+}
+
+/* ── Power math in attack modal ── */
+.atk-math{
+  background:var(--bg3);border-radius:var(--r2);padding:14px 16px;
+  margin:12px 0;font-size:13px;
+}
+.atk-math-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
+.atk-math-lbl{color:var(--tx2);font-weight:700}
+.atk-math-val{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800}
+.atk-math-result{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr);
+  font-size:14px;font-weight:800;
+}
+.atk-win{color:var(--green)}.atk-lose{color:var(--red2)}.atk-tie{color:var(--don)}
+
+/* ── DON!! select hint ── */
+.don-hint{
+  font-size:11px;color:var(--don);font-weight:700;
+  padding:4px 8px;background:rgba(245,158,11,.08);
+  border:1px solid rgba(245,158,11,.2);border-radius:var(--r);
+  margin-bottom:4px;display:none;
+}
+.don-hint.show{display:block}
 
 </style>
 </head>
@@ -1484,6 +1708,13 @@ input[type=range]#vol-slider::-moz-range-thumb{
         <div class="db-progress-fill" id="deck-progress"></div>
       </div>
       <div class="dlist" id="deck-list"></div>
+      <!-- Selected card preview -->
+      <div id="db-card-preview" style="margin-top:10px;flex-shrink:0;display:none">
+        <div style="font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Card Preview</div>
+        <img id="db-preview-img" src="" alt="" style="width:100%;border-radius:6px;border:1px solid var(--bdr2)">
+        <div id="db-preview-name" style="font-size:12px;font-weight:800;margin-top:5px;color:var(--tx)"></div>
+        <div id="db-preview-eff" style="font-size:10px;color:var(--tx2);margin-top:3px;line-height:1.5"></div>
+      </div>
     </div>
 
   </div>
@@ -1491,6 +1722,11 @@ input[type=range]#vol-slider::-moz-range-thumb{
 
 
 <script>
+
+
+
+
+
 
 /* ══════════════════════════════════════════════════════════
    DATA
@@ -1569,7 +1805,9 @@ const LEADERS = [
    effect:"[Activate:Main] Once per turn: ② Look at the top 5 cards of your deck. Add 1 card to your hand and return the rest to the bottom in any order."},
   {id:'OP05-118',name:'Kaido',color:'Purple',power:6000,life:3,affiliation:'Beasts Pirates',series:'OP05',
    effect:"[On Attack] You may trash 1 card from your hand: This Leader gains +2000 power during this battle."},
-  {id:'OP05-001',name:'Trafalgar Law',color:'Blue',power:5000,life:4,affiliation:'Heart Pirates/Seven Warlords',series:'OP05',
+  {id:'OP05-001',name:'Sabo',color:'Green',power:5000,life:4,affiliation:'Revolutionary Army',series:'OP05',
+   effect:"[DON!! x1][Opponent's Turn][Once Per Turn] If your Character with 5000 power or more would be K.O.'d, you may give that Character -1000 power during this turn instead of it being K.O.'d."},
+  {id:'OP05-003',name:'Trafalgar Law',color:'Blue',power:5000,life:4,affiliation:'Heart Pirates/Seven Warlords',series:'OP05',
    effect:"[Activate:Main] Once per turn: Place 1 card from your hand at the bottom of your deck: Draw 1 card."},
   {id:'OP06-001',name:'Roronoa Zoro',color:'Green',power:5000,life:5,affiliation:'Straw Hat Crew',series:'OP06',
    effect:"[DON!! x2][When Attacking] Your opponent cannot activate Blockers with a power of 5000 or less during this battle."},
@@ -1590,17 +1828,17 @@ const CARDS = [
    effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.)"},
   {id:'ST01-007',name:'Nami',type:'character',color:'Red',cost:1,power:1000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[Activate:Main] Once per turn: Equip 1 of your rested DON!! cards to your Leader or 1 of your Characters."},
-  {id:'ST01-008',name:'Nico Robin',type:'character',color:'Red',cost:3,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
+  {id:'ST01-008',name:'Nico Robin',type:'character',color:'Red',cost:3,power:3000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[On Play] Look at 5 cards from the top of your deck; reveal up to 1 [Straw Hat Crew] card and add it to your hand. Return the rest to the bottom in any order."},
-  {id:'ST01-009',name:'Nefertari Vivi',type:'character',color:'Red',cost:2,power:4000,counter:1000,affiliation:'Alabasta Kingdom',series:'ST01',
+  {id:'ST01-009',name:'Nefertari Vivi',type:'character',color:'Red',cost:2,power:3000,counter:1000,affiliation:'Alabasta Kingdom',series:'ST01',
    effect:"[On Play] If your Leader is [Straw Hat Crew] type, look at 5 cards from the top of your deck; reveal up to 1 [Alabasta] card and add it to your hand."},
-  {id:'ST01-010',name:'Franky',type:'character',color:'Red',cost:4,power:6000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
+  {id:'ST01-010',name:'Franky',type:'character',color:'Red',cost:4,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[On Play] Look at 5 cards from the top of your deck; reveal up to 1 [Straw Hat Crew] type card and add it to your hand. Return the rest to the bottom."},
-  {id:'ST01-011',name:'Brook',type:'character',color:'Red',cost:2,power:3000,counter:2000,affiliation:'Straw Hat Crew',series:'ST01',
+  {id:'ST01-011',name:'Brook',type:'character',color:'Red',cost:2,power:2000,counter:2000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[On Play] Attach up to 2 of your rested DON!! cards to your Leader or 1 of your Characters."},
-  {id:'ST01-012',name:'Monkey D. Luffy',type:'character',color:'Red',cost:5,power:6000,counter:0,affiliation:'Straw Hat Crew',series:'ST01',
+  {id:'ST01-012',name:'Monkey D. Luffy',type:'character',color:'Red',cost:5,power:5000,counter:0,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[Rush] This card can attack on the turn it is played. [DON!! x2][When Attacking] Your opponent cannot activate Blocker during this battle."},
-  {id:'ST01-013',name:'Roronoa Zoro',type:'character',color:'Red',cost:3,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
+  {id:'ST01-013',name:'Roronoa Zoro',type:'character',color:'Red',cost:3,power:4000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[DON!! x1] This Character gains +1000 power."},
   {id:'ST01-014',name:'Guard Point',type:'event',color:'Red',cost:1,power:0,counter:3000,affiliation:'',series:'ST01',
    effect:"[Counter] Up to 1 of your Leader or Character cards gains +3000 power during this battle. [Trigger] Up to 1 of your Leader or Character cards gains +1000 power during this turn."},
@@ -1622,7 +1860,7 @@ const CARDS = [
    effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.)"},
   {id:'ST03-008',name:'Trafalgar Law',type:'character',color:'Blue',cost:4,power:6000,counter:1000,affiliation:'Seven Warlords of the Sea/Heart Pirates',series:'ST03',
    effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.) [On Play] Draw 1 card."},
-  {id:'ST03-009',name:'Donquixote Doflamingo',type:'character',color:'Blue',cost:6,power:8000,counter:1000,affiliation:'Seven Warlords/Donquixote Pirates',series:'ST03',
+  {id:'ST03-009',name:'Donquixote Doflamingo',type:'character',color:'Blue',cost:6,power:7000,counter:1000,affiliation:'Seven Warlords/Donquixote Pirates',series:'ST03',
    effect:"[On Play] Return up to 1 cost 4 or lower Character to its owner's hand."},
   {id:'ST03-014',name:'Marshall D. Teach',type:'character',color:'Blue',cost:8,power:9000,counter:0,affiliation:'Seven Warlords/Blackbeard Pirates',series:'ST03',
    effect:"[On Play] Your opponent discards down to 4 cards in hand."},
@@ -1638,7 +1876,7 @@ const CARDS = [
    effect:"[On Play] Up to 2 of your Leader or Character cards gain +1000 power during this turn."},
   {id:'OP01-054',name:'X.Drake',type:'character',color:'Red',cost:5,power:6000,counter:1000,affiliation:'Worst Generation/SWORD',series:'OP01',
    effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.)"},
-  {id:'OP01-093',name:'Nami',type:'character',color:'Blue',cost:2,power:2000,counter:2000,affiliation:'Straw Hat Crew',series:'OP01',
+  {id:'OP01-093',name:'Nami',type:'character',color:'Blue',cost:1,power:1000,counter:2000,affiliation:'Straw Hat Crew',series:'OP01',
    effect:"[On Play] Look at the top 3 cards of your deck; reveal up to 1 Blue card and add it to your hand. Return the rest to the bottom."},
   {id:'OP01-120',name:'Shanks',type:'character',color:'Red',cost:9,power:10000,counter:0,affiliation:'Red Hair Pirates/Four Emperors',series:'OP01',
    effect:"[On Play] Your opponent cannot add cards to their Life cards this turn. If your opponent has 0 Life cards, they take 1 damage."},
@@ -1658,7 +1896,7 @@ const CARDS = [
   // ══ OP03 Pillars of Strength ══
   {id:'OP03-022',name:'Charlotte Katakuri',type:'character',color:'Black',cost:7,power:8000,counter:0,affiliation:'Big Mom Pirates',series:'OP03',
    effect:"[On Play] ① Look at the top 3 cards of your opponent's deck and return them in any order."},
-  {id:'OP03-040',name:'Big Mom',type:'character',color:'Purple',cost:9,power:10000,counter:0,affiliation:'Big Mom Pirates/Four Emperors',series:'OP03',
+  {id:'OP03-040',name:'Charlotte Linlin',type:'character',color:'Purple',cost:9,power:10000,counter:0,affiliation:'Big Mom Pirates/Four Emperors',series:'OP03',
    effect:"[On Play] Place up to 2 cards from your opponent's hand at the bottom of their deck. Then draw 2 cards."},
   {id:'OP03-058',name:'Brook',type:'character',color:'Black',cost:4,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'OP03',
    effect:"[Rush] This card can attack on the turn it is played. [DON!! x1][When Attacking] This Character gains +2000 power during this battle."},
@@ -1733,6 +1971,29 @@ const OP_CHARS = [
    STATE
 ══════════════════════════════════════════════════════════ */
 let USER = {name:'',xp:'beginner',lang:'English',uid:null,isGuest:true};
+
+/* ── Global Settings ── */
+var SETTINGS = {
+  zoomMode:       'click',    // 'click' = right-click fullscreen | 'hover' = tooltip on hover | 'window' = detached mini-window
+  cardAnimation:  true,       // card flip/hover animations
+  autoEndTurn:    false,      // auto advance to next phase when no actions left
+  showPowerCalc:  true,       // show +DON!! power in real time on cards
+  soundEnabled:   true,       // UI sound effects (future)
+  deckWarnings:   true,       // warn when deck < 50 cards on save
+  logExpanded:    true,       // keep game log expanded
+  theme:          'dark',     // 'dark' only for now
+};
+
+function loadSettings(){
+  try{
+    const s = localStorage.getItem('op_settings');
+    if(s) SETTINGS = {...SETTINGS, ...JSON.parse(s)};
+  }catch(e){}
+}
+function saveSettings(){
+  localStorage.setItem('op_settings', JSON.stringify(SETTINGS));
+}
+loadSettings();
 let G = {};
 let DB = {name:'',color:'Red',sleeve:'Classic',leader:'ST01-001',cards:{}};
 let savedDecks = [];
@@ -1754,10 +2015,69 @@ function showScreen(id){
 }
 function openM(id){document.getElementById(id).classList.add('open');}
 function closeM(id){document.getElementById(id).classList.remove('open');}
-function toast(msg,type=''){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast show'+(type?' '+type:'');
-  clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3000);
+function toast(msg, type=''){
+  const container = document.getElementById('toast');
+  if(!container) return;
+
+  // If we're in gameplay, route err/warn to in-mat notifier
+  if(G && G.p1 && (type==='err'||type==='warn'||type==='')){
+    const screen = document.getElementById('screen-game');
+    if(screen && screen.classList.contains('active')){
+      gameNotify(msg, type||'info');
+      return;
+    }
+  }
+
+  // Global toast (top-right) for non-gameplay or ok messages
+  const el = document.createElement('div');
+  el.className = 'tst' + (type?' '+type:'');
+  el.textContent = msg;
+  container.appendChild(el);
+
+  // Auto-dismiss with fade
+  const dismiss = () => {
+    el.classList.add('fading');
+    setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 350);
+  };
+  const t = setTimeout(dismiss, type==='err'||type==='warn' ? 4000 : 3000);
+  el.addEventListener('click', () => { clearTimeout(t); dismiss(); });
+}
+
+/* ── In-mat gameplay notification ── */
+let _gnTimers = new WeakMap();
+function gameNotify(msg, type){
+  const container = document.getElementById('game-notify');
+  if(!container) return;
+
+  const typeMap = {
+    'err': {cls:'gn-err', icon:'⚠'},
+    'warn': {cls:'gn-warn', icon:'⚡'},
+    'ok': {cls:'gn-ok', icon:'✓'},
+    'info': {cls:'gn-info', icon:'ℹ'},
+    '': {cls:'gn-info', icon:'ℹ'},
+  };
+  const {cls, icon} = typeMap[type] || typeMap['info'];
+
+  // Clear existing messages of same type to avoid stacking duplicates
+  container.querySelectorAll('.'+cls).forEach(el => {
+    clearTimeout(_gnTimers.get(el));
+    el.classList.add('fading');
+    setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 350);
+  });
+
+  const el = document.createElement('div');
+  el.className = 'gn-msg ' + cls;
+  el.innerHTML = '<span class="gn-icon">'+icon+'</span><span>'+msg+'</span>';
+  container.appendChild(el);
+
+  const duration = type==='err' ? 3500 : 2500;
+  const dismiss = () => {
+    el.classList.add('fading');
+    setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 350);
+  };
+  const t = setTimeout(dismiss, duration);
+  _gnTimers.set(el, t);
+  el.addEventListener('click', ()=>{ clearTimeout(t); dismiss(); });
 }
 function colorHex(c){return{Red:'#e8312a',Blue:'#3a8fe8',Green:'#3ab87a',Purple:'#8b5cf6',Yellow:'#f5c842',Black:'#6b7280'}[c]||'#888';}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
@@ -1781,13 +2101,13 @@ function showLoad(lbl,ms=1400){
    FIREBASE (lazy — only loads when Google sign-in clicked)
 ══════════════════════════════════════════════════════════ */
 const FB_CONFIG = {
-  apiKey: "AIzaSyBqjlNjEKZiNa27Gf7Z_5nP0MOOGXeZlO0",
-  authDomain: "optcg-simulator.firebaseapp.com",
-  projectId: "optcg-simulator",
-  storageBucket: "optcg-simulator.firebasestorage.app",
-  messagingSenderId: "27791747383",
-  appId: "1:27791747383:web:5ab891ae4caeb9988152b2",
-  measurementId: "G-8HL5LPHP92"
+  apiKey:"AIzaSyBqjlNjEKZiNa27Gf7Z_5nP0MOOGXeZlO0",
+  authDomain:"optcg-simulator.firebaseapp.com",
+  projectId:"optcg-simulator",
+  storageBucket:"optcg-simulator.firebasestorage.app",
+  messagingSenderId:"27791747383",
+  appId:"1:27791747383:web:5ab891ae4caeb9988152b2",
+  measurementId:"G-8HL5LPHP92"
 };
 let fbDb=null,fbAuth=null,fbReady=false,fbLoading=false;
 
@@ -1810,10 +2130,6 @@ function loadFB(){
             fbUser=u;
             if(u){$i('sync-badge').style.display='block';loadCloudProfile(u.uid);}
           });
-          // Handle redirect result (mobile sign-in)
-          fbAuth.getRedirectResult().then(result=>{
-            if(result&&result.user) console.log('Redirect sign-in success');
-          }).catch(e=>{ if(e.code!=='auth/no-auth-event') console.warn('Redirect result:',e); });
           res();
         }catch(e){fbLoading=false;rej(e);}
       }};
@@ -1827,18 +2143,20 @@ async function signInWithGoogle(){
   toast('Loading Google Sign-In...');
   try{await loadFB();}catch(e){toast('Could not load Firebase — check internet.','err');return;}
   try{
-    const p=new firebase.auth.GoogleAuthProvider();p.addScope('profile');
-    // Try popup first; fall back to redirect on mobile / popup-blocked
-    try{
-      await fbAuth.signInWithPopup(p);
-    }catch(popupErr){
-      if(popupErr.code==='auth/popup-blocked'||popupErr.code==='auth/operation-not-supported-in-this-environment'){
-        await fbAuth.signInWithRedirect(p);
-      }else if(popupErr.code!=='auth/popup-closed-by-user'){
-        toast('Sign-in failed: '+popupErr.message,'err');
-      }
+    const p=new firebase.auth.GoogleAuthProvider();
+    p.addScope('profile');
+    p.setCustomParameters({prompt:'select_account'});
+    const result = await fbAuth.signInWithPopup(p);
+    if(result && result.user) toast('Signed in as '+result.user.displayName,'ok');
+  }catch(e){
+    if(e.code==='auth/popup-closed-by-user') return;
+    if(e.code==='auth/popup-blocked'){
+      toast('Popup blocked — please allow popups for this site','err');
+    } else {
+      toast('Sign-in failed: '+e.message,'err');
+      console.error('Google sign-in error:',e);
     }
-  }catch(e){toast('Sign-in error: '+e.message,'err');}
+  }
 }
 
 function signOut(){if(fbAuth)fbAuth.signOut();USER={name:'',xp:'beginner',lang:'English',uid:null,isGuest:true};history=[];fbUser=null;$i('sync-badge').style.display='none';showScreen('screen-auth');}
@@ -2058,6 +2376,20 @@ function addCard(id){
   if(tot>=50){toast('Deck full (50 max)','err');return;}
   if((DB.cards[id]||0)>=4){toast('Max 4 copies per card','err');return;}
   DB.cards[id]=(DB.cards[id]||0)+1;renderBrowser();renderDeckList();
+  // Show preview in right panel
+  const card=CARDS.find(c=>c.id===id)||LEADERS.find(l=>l.id===id);
+  if(card){
+    const prev=$i('db-card-preview');
+    const img=$i('db-preview-img');
+    const nm=$i('db-preview-name');
+    const eff=$i('db-preview-eff');
+    if(prev&&img){
+      img.src=IMG(card.id);
+      if(nm) nm.textContent=card.name+' — '+card.color+' | Cost:'+card.cost+' | Power:'+card.power;
+      if(eff) eff.textContent=card.effect||'';
+      prev.style.display='block';
+    }
+  }
 }
 function removeCard(id){if(!DB.cards[id])return;DB.cards[id]--;if(!DB.cards[id])delete DB.cards[id];renderBrowser();renderDeckList();}
 function renderDeckList(){
@@ -2308,8 +2640,31 @@ function doAtkCard(){
 function openAtkM(){
   const att=G.ac==='leader'?ap().leader:ap().field.find(c=>c.uid===G.ac);
   const atkP=ep(att);const o=op();
-  $i('m-atk-desc').innerHTML=`<strong>${att.name}</strong> (${atkP} power) attacks. Win by being <strong>strictly greater</strong>.`;
-  $i('m-atk-tgts').innerHTML=`<button class="abtn ad" onclick="resAtk('leader',null)">⚔ ${o.name}'s Leader (${ep(o.leader)} power · ${o.life.length} life)</button>`+o.field.map(c=>`<button class="abtn" onclick="resAtk('char','${c.uid}')">👤 ${c.name} (${ep(c)} power)</button>`).join('');
+  $i('m-atk-desc').innerHTML=`<strong>${att.name}</strong> <span style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:18px">${atkP}</span> power — choose a target:`;
+  // Build targets with power math
+  const mathHtml=(defP,defName,isLeader)=>{
+    const win=atkP>defP;const tie=atkP===defP;
+    const diff=atkP-defP;
+    const resultCls=win?'atk-win':tie?'atk-tie':'atk-lose';
+    const resultTxt=win?'✓ WIN (+'+diff+')':(tie?'⚡ TIE (defender wins)':'✗ LOSE ('+diff+')');
+    const extraInfo=isLeader?`<div style="font-size:11px;color:var(--tx3);margin-top:4px">Life: ${o.life.length} card(s) remaining</div>`:'';
+    return `<div class="atk-math">
+      <div class="atk-math-row"><span class="atk-math-lbl">Your Attacker</span><span class="atk-math-val" style="color:var(--gold)">${atkP}</span></div>
+      <div class="atk-math-row"><span class="atk-math-lbl">Target: ${defName}</span><span class="atk-math-val" style="color:var(--red2)">${defP}</span></div>
+      <div class="atk-math-result"><span>${att.name} vs ${defName}</span><span class="${resultCls}">${resultTxt}</span></div>
+      ${extraInfo}
+    </div>`;
+  };
+  $i('m-atk-tgts').innerHTML=
+    `<div style="font-size:11px;color:var(--tx3);font-weight:700;margin-bottom:4px">Click a target to confirm attack:</div>`
+    +`<button class="abtn ad" onclick="resAtk('leader',null)" style="height:auto;padding:10px;flex-direction:column;align-items:stretch;gap:0">
+        <span style="font-size:12px;font-weight:800;margin-bottom:4px">⚔ ${o.name}'s Leader</span>
+        ${mathHtml(ep(o.leader),o.name+"'s Leader",true)}
+      </button>`
+    +o.field.map(c=>`<button class="abtn" onclick="resAtk('char','${c.uid}')" style="height:auto;padding:10px;flex-direction:column;align-items:stretch;gap:0;margin-top:6px">
+        <span style="font-size:12px;font-weight:800;margin-bottom:4px">👤 ${c.name}</span>
+        ${mathHtml(ep(c),c.name,false)}
+      </button>`).join('');
   openM('m-atk');
 }
 
@@ -2322,6 +2677,7 @@ function resAtk(tType,tUid){
 /* AI */
 function aiTurn(){
   if(G.winner||G.ap!=='p2')return;
+  showTurnBanner("OPPONENT'S TURN",'Sit tight, Captain','rgba(232,49,42,.8)');
   gLog('AI Refresh.','sy');G.ph='Refresh';renderGame();
   setTimeout(()=>{drawCard('p2');G.ph='Draw';renderGame();
     setTimeout(()=>{upP('p2',p=>({...p,don:gnDon(p.don,2)}));G.ph='DON!!';renderGame();
@@ -2363,7 +2719,9 @@ function aiEnd(){
   upP('p2',p=>({...p,field:p.field.map(c=>({...c,rested:false,donAtt:0})),leader:{...p.leader,rested:false,donAtt:0}}));
   gLog("Opponent ends turn.",'sy');G.ap='p1';G.ph='Refresh';G.turn++;G.sc=null;G.ac=null;
   upP('p1',p=>({...p,field:p.field.map(c=>({...c,rested:false,donAtt:0})),leader:{...p.leader,rested:false,donAtt:0}}));
-  renderGame();if(G.winner)endGame();
+  renderGame();if(G.winner){endGame();return;}
+  // Show "Your Turn!" banner with delay so player sees it after AI animation
+  setTimeout(()=>showTurnBanner('YOUR TURN ⚓','Your move, Captain','rgba(245,200,66,.8)'), 200);
 }
 
 /* RESET + END */
@@ -2427,7 +2785,9 @@ function cfHtml(card,opts={}){
   const bStyle=card.type==='leader'?';border:2px solid var(--gold)':';border-color:'+col;
   const zoomKey=card.uid||card.id;
   return`<div class="${cls}" data-uid="${card.uid}" data-zoom="${zoomKey}" style="background:var(--bg3)${bStyle}"
-    oncontextmenu="event.preventDefault();zoomCard(event,this.dataset.zoom)">
+    oncontextmenu="event.preventDefault();zoomCard(event,this.dataset.zoom)"
+    onmouseenter="hoverZoomStart(event,this.dataset.zoom)"
+    onmouseleave="hoverZoomEnd()">
     <img src="${IMG(imgId)}" alt="${card.name}" loading="lazy"
       style="image-rendering:auto;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:5px"
       onerror="this.style.display='none'">
@@ -2469,9 +2829,62 @@ function renderGame(){
   setD('btn-atkl',!(inMain&&!p1.leader.rested));
   setD('btn-atkc',!(inMain&&G.sc&&p1.field.find(c=>c.uid===G.sc&&!c.rested)));
   const nb=$i('btn-next');if(nb)nb.textContent=ph==='End'?'▶ End Turn':'▶ Next: '+(PHASES[PHASES.indexOf(ph)+1]||'End');
+  // Dynamic button tooltips
+  const btnPlay=$i('btn-play');
+  if(btnPlay){
+    if(!G.sc) btnPlay.title='Select a card from your hand first';
+    else if(p1.hand.find(cc=>cc.uid===G.sc)){
+      const hc=p1.hand.find(cc=>cc.uid===G.sc);
+      const don=avDon(p1);
+      if(hc.cost>don) btnPlay.title='Need '+hc.cost+' DON!! — you have '+don;
+      else btnPlay.title='Play '+hc.name+' (cost: '+hc.cost+')';
+    } else btnPlay.title='Select a card from your hand';
+  }
+  const btnDonC=$i('btn-donc');
+  if(btnDonC){
+    if(!G.sc||!p1.field.find(cc=>cc.uid===G.sc)) btnDonC.title='Select a character on YOUR field first';
+    else if(p1d<1) btnDonC.title='No DON!! available this turn';
+    else { const fc=p1.field.find(cc=>cc.uid===G.sc); btnDonC.title='Attach DON!! to '+fc.name+' (+1000 power)'; }
+  }
+  const btnDonL=$i('btn-donl');
+  if(btnDonL){
+    if(p1d<1) btnDonL.title='No DON!! available this turn';
+    else btnDonL.title='Attach DON!! to '+p1.leader.name+' (+1000 power)';
+  }
+  const btnAtkL=$i('btn-atkl');
+  if(btnAtkL){
+    if(p1.leader.rested) btnAtkL.title='Leader is rested — cannot attack again this turn';
+    else if(ph!=='Main') btnAtkL.title='Can only attack during Main Phase';
+    else btnAtkL.title='Attack with '+p1.leader.name+' ('+ep(p1.leader)+' power)';
+  }
   const sc=$i('sc-inner');const card=G.sc?(p1.hand.find(c=>c.uid===G.sc)||p1.field.find(c=>c.uid===G.sc)):null;
-  if(sc){if(!card)sc.innerHTML='<span style="color:var(--tx3);font-size:11px">Click a card to inspect</span>';
-    else sc.innerHTML=`<div style="display:flex;gap:7px;align-items:flex-start"><img class="sc-img" src="${IMG(card.card_image_id||card.id)}" onerror="this.style.display='none'" alt="${card.name}"><div><div class="sc-nm">${card.name}</div><div class="sc-row">Type: ${card.type} · Cost: ${card.cost||0}</div><div class="sc-row">Power: <strong style="color:var(--gold)">${card.power||'—'}</strong></div>${card.counter?`<div class="sc-row">Counter: +${card.counter}</div>`:''}${card.effect?`<div class="sc-eff">${card.effect}</div>`:''}</div></div>`;}
+  if(sc){
+    if(!card){
+      sc.innerHTML='<div style="text-align:center;padding:10px 0"><div style="font-size:28px;opacity:.3">🃏</div><div style="font-size:11px;color:var(--tx3);margin-top:6px">Tap a card to select it</div><div style="font-size:10px;color:var(--tx3);margin-top:3px;opacity:.7">Right-click to zoom</div></div>';
+    } else {
+      const onField=!!p1.field.find(cc=>cc.uid===G.sc);
+      const inHand=!!p1.hand.find(cc=>cc.uid===G.sc);
+      const locLabel=onField?'<span style="background:rgba(58,143,232,.2);color:#93c5fd;font-size:9px;font-weight:800;padding:1px 5px;border-radius:3px;letter-spacing:.04em">ON FIELD</span>':inHand?'<span style="background:rgba(58,184,122,.2);color:#86efac;font-size:9px;font-weight:800;padding:1px 5px;border-radius:3px;letter-spacing:.04em">IN HAND</span>':'';
+      const donBonus=card.donAtt>0?`<div class="sc-row" style="color:var(--don)">DON!! Bonus: +${card.donAtt*1000}</div>`:'';
+      const totalPow=(card.power||0)+(card.donAtt||0)*1000;
+      sc.innerHTML=`<div style="display:flex;gap:7px;align-items:flex-start">
+        <div style="flex-shrink:0;position:relative">
+          <img class="sc-img" src="${IMG(card.card_image_id||card.id)}" onerror="this.style.display='none'" alt="${card.name}"
+            style="cursor:pointer" oncontextmenu="zoomCard(event,'${card.uid||card.id}');return false">
+          <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;color:var(--tx3);letter-spacing:.05em">RIGHT-CLICK TO ZOOM</div>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px">${locLabel}</div>
+          <div class="sc-nm">${card.name}</div>
+          <div class="sc-row">Type: ${card.type} · Cost: ${card.cost||0}</div>
+          <div class="sc-row">Power: <strong style="color:var(--gold)">${totalPow}</strong>${card.donAtt>0?` <span style="color:var(--don);font-size:10px">(base ${card.power||0})</span>`:''}</div>
+          ${card.counter?`<div class="sc-row">Counter: <strong style="color:var(--blue)">+${card.counter}</strong></div>`:''}
+          ${donBonus}
+          ${card.effect?`<div class="sc-eff">${card.effect}</div>`:''}
+        </div>
+      </div>`;
+    }
+  }
   if(G.ta)renderTut();
   updateMobileStats();
 }
@@ -2480,40 +2893,113 @@ function renderGame(){
 /* ══════════════════════════════════════════════════════════
    CARD ZOOM
 ══════════════════════════════════════════════════════════ */
-function zoomCard(e, key){
-  e.preventDefault();e.stopPropagation();
-  // Look up card data from registry — no encoding issues
-  let card = lookupCard(key);
-  if(!card){
-    // Fallback: check CARDS and LEADERS arrays directly by id
-    card = CARDS.find(c=>c.id===key) || LEADERS.find(l=>l.id===key);
-  }
-  if(!card) return;
+/* ── Shared card data population ── */
+function _populateZoomModal(card){
   const col=colorHex(card.color||'Red');
-  // Use best available image source — official site is highest res
   const hiRes=`https://en.onepiece-cardgame.com/images/cardlist/card/${card.id}.png`;
-  const fallback=IMG(card.id);
   const img=$i('zoom-img');
-  img.src=hiRes;
-  img.onerror=()=>{img.src=fallback;};
-  img.style.imageRendering='auto';
-  setH('zoom-name',card.name||'—');
-  // Badges
-  let badges=`<span class="zbadge type">${card.type||'character'}</span>`;
-  if(card.color)badges+=`<span class="zbadge col" style="background:${col};color:#fff">${card.color}</span>`;
+  if(img){ img.src=hiRes; img.onerror=()=>{img.src=IMG(card.id);}; img.style.imageRendering='auto'; }
+  setH('zoom-name', card.name||'—');
   const legal=isBlockLegal(card.id);
-  badges+=`<span class="zoom-block-badge ${legal?'legal':'rotated'}">${legal?'✓ Standard Legal':'⛔ Rotated Out'}</span>`;
-  setH('zoom-badges',badges);
-  setH('zoom-power',card.power||'—');
-  setH('zoom-cost',card.cost!==undefined?card.cost:'-');
-  setH('zoom-counter', (card.counter !== undefined && card.counter !== null && card.counter !== 0) ? '+'+card.counter : (card.counter===0 ? 'None' : '—'));
+  let badges=`<span class="zbadge type">${(card.type||'character').toUpperCase()}</span>`;
+  if(card.color) badges+=`<span class="zbadge col" style="background:${col};color:#fff">${card.color}</span>`;
+  badges+=`<span class="zoom-block-badge ${legal?'legal':'rotated'}">${legal?'✓ Standard Legal':'⛔ Rotated'}</span>`;
+  setH('zoom-badges', badges);
+  setH('zoom-power', card.power||'—');
+  setH('zoom-cost', card.cost!==undefined?card.cost:'—');
+  setH('zoom-counter', card.counter>0?'+'+card.counter:'—');
   const effEl=$i('zoom-effect');
   if(card.effect){effEl.textContent=card.effect;effEl.style.display='block';}
   else effEl.style.display='none';
-  $i('zoom-modal').classList.add('open');
+}
+
+function _lookupCardSafe(key){
+  let card = lookupCard(key);
+  if(!card) card = CARDS.find(c=>c.id===key)||LEADERS.find(l=>l.id===key);
+  return card;
+}
+
+/* ── Main zoom entry: respects SETTINGS.zoomMode ── */
+function zoomCard(e, key){
+  e.preventDefault(); e.stopPropagation();
+  const card = _lookupCardSafe(key);
+  if(!card) return false;
+  if(SETTINGS.zoomMode === 'window'){
+    showZoomWindow(card, e.clientX, e.clientY);
+  } else {
+    // 'click' mode = fullscreen modal
+    _populateZoomModal(card);
+    $i('zoom-modal').classList.add('open');
+  }
   return false;
 }
-function closeZoom(){$i('zoom-modal').classList.remove('open');}
+
+function closeZoom(){
+  $i('zoom-modal').classList.remove('open');
+  hideZoomWindow();
+}
+
+/* ── Hover zoom: show tooltip near cursor ── */
+let _hoverTimer = null;
+function hoverZoomStart(e, key){
+  if(SETTINGS.zoomMode !== 'hover') return;
+  _hoverTimer = setTimeout(()=>{
+    const card = _lookupCardSafe(key);
+    if(card) showZoomWindow(card, e.clientX, e.clientY);
+  }, 120);
+}
+function hoverZoomEnd(){
+  if(_hoverTimer){ clearTimeout(_hoverTimer); _hoverTimer=null; }
+  if(SETTINGS.zoomMode === 'hover') hideZoomWindow();
+}
+
+/* ── Floating mini-window zoom ── */
+function showZoomWindow(card, cx, cy){
+  let win = $i('zoom-window');
+  if(!win){
+    win = document.createElement('div');
+    win.id = 'zoom-window';
+    win.innerHTML = '<img id="zw-img" src="" alt="">'
+      + '<div id="zw-info">'
+      + '<div id="zw-name" class="zw-name"></div>'
+      + '<div id="zw-badges" class="zw-badges"></div>'
+      + '<div id="zw-stats" class="zw-stats"></div>'
+      + '<div id="zw-eff" class="zw-eff"></div>'
+      + '</div>';
+    win.onclick = ()=>win.style.display='none';
+    document.body.appendChild(win);
+  }
+  const col = colorHex(card.color||'Red');
+  const hiRes = `https://en.onepiece-cardgame.com/images/cardlist/card/${card.id}.png`;
+  const img = $i('zw-img');
+  img.src = hiRes; img.onerror=()=>{img.src=IMG(card.id);};
+  $i('zw-name').textContent = card.name;
+  const legal = isBlockLegal(card.id);
+  $i('zw-badges').innerHTML = `<span class="zbadge type">${(card.type||'character').toUpperCase()}</span>`
+    + `<span class="zbadge col" style="background:${col};color:#fff">${card.color||''}</span>`
+    + `<span class="zoom-block-badge ${legal?'legal':'rotated'}">${legal?'✓ Legal':'⛔ Rotated'}</span>`;
+  $i('zw-stats').innerHTML = `<span>Power: <b>${card.power||'—'}</b></span> `
+    + `<span>Cost: <b>${card.cost!==undefined?card.cost:'—'}</b></span>`
+    + (card.counter>0?` <span>Counter: <b>+${card.counter}</b></span>`:'');
+  const ef = $i('zw-eff');
+  ef.textContent = card.effect||'';
+  ef.style.display = card.effect?'block':'none';
+
+  // Position near cursor, keep in viewport
+  win.style.display = 'flex';
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const w=320, h=420;
+  let x = cx+16, y = cy-20;
+  if(x+w > vw-10) x = cx-w-16;
+  if(y+h > vh-10) y = vh-h-10;
+  if(y < 10) y = 10;
+  win.style.left = x+'px';
+  win.style.top = y+'px';
+}
+function hideZoomWindow(){
+  const win = $i('zoom-window');
+  if(win) win.style.display='none';
+}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeZoom();});
 
 /* ══════════════════════════════════════════════════════════
@@ -3144,13 +3630,14 @@ let musicMuted = false;
 let musicShuffle = false;
 
 // Load YouTube IFrame API
-(function loadYTAPI(){
+// YouTube API loaded lazily when music panel first opened
+function loadYTAPI(){
   if(document.getElementById('yt-api-script')) return;
   const s = document.createElement('script');
   s.id = 'yt-api-script';
   s.src = 'https://www.youtube.com/iframe_api';
   document.head.appendChild(s);
-})();
+}
 
 // Called by YouTube API when ready
 function onYouTubeIframeAPIReady(){
@@ -3160,17 +3647,17 @@ function onYouTubeIframeAPIReady(){
     width:'1',
     videoId:'hVu5_LL7iHk',
     playerVars:{
-      listType: 'playlist',
-      list:     'PLbE7WqfE1jDu9EXubPF_2gbj0WAhJBCwh',
       autoplay:  1,
-      mute:      1,   // muted autoplay allowed by browsers; user unmutes via slider
+      mute:      1,
       loop:      1,
+      playlist:  'hVu5_LL7iHk',
       controls:  0,
       disablekb: 1,
       fs:        0,
       iv_load_policy: 3,
       modestbranding: 1,
       rel:       0,
+      origin:    window.location.origin,
     },
     events:{
       onReady: onPlayerReady,
@@ -3276,9 +3763,10 @@ function toggleMusicPanel(){
   musicPanelOpen = !musicPanelOpen;
   const panel = document.getElementById('music-controls');
   if(panel) panel.classList.toggle('open', musicPanelOpen);
-  // Load YT if not already (lazy init on first open)
-  if(musicPanelOpen && !musicReady && !ytPlayer){
-    onYouTubeIframeAPIReady();
+  // Load YT API first time panel is opened
+  if(musicPanelOpen && !ytPlayer){
+    loadYTAPI();
+    // onYouTubeIframeAPIReady called automatically by YT API when loaded
   }
 }
 
@@ -3332,6 +3820,73 @@ function deleteDeck(i){
   renderSavedDecks();toast('Deck deleted','ok');
 }
 
+
+/* ════════════════════════════════════════
+   SETTINGS SYSTEM
+════════════════════════════════════════ */
+function openSettings(){
+  // Sync checkboxes to current SETTINGS values
+  const sync = (id, val) => { const el=$i(id); if(el) el.checked=val; };
+  sync('stg-powerCalc', SETTINGS.showPowerCalc);
+  sync('stg-anim',      SETTINGS.cardAnimation);
+  sync('stg-deckwarn',  SETTINGS.deckWarnings);
+  sync('stg-block',     SETTINGS.blockEnforced||BLOCK.enforced);
+  sync('stg-music',     SETTINGS.soundEnabled);
+  // Sync zoom mode buttons
+  document.querySelectorAll('#stg-zoom .stg-opt').forEach(el=>{
+    el.classList.toggle('on', el.dataset.val === SETTINGS.zoomMode);
+  });
+  openM('m-settings');
+}
+
+function setSetting(key, val, btn, groupId){
+  SETTINGS[key] = val;
+  // Update active state in button group
+  document.querySelectorAll('#'+groupId+' .stg-opt').forEach(el=>el.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  saveSettings();
+  applySettings();
+}
+
+function setSettingToggle(key, val){
+  SETTINGS[key] = val;
+  if(key==='blockEnforced') BLOCK.enforced = val;
+  saveSettings();
+  applySettings();
+}
+
+function applySettings(){
+  // Card animations
+  const styleId = 'dyn-settings-style';
+  let styleEl = document.getElementById(styleId);
+  if(!styleEl){ styleEl=document.createElement('style'); styleEl.id=styleId; document.head.appendChild(styleEl); }
+  let css = '';
+  if(!SETTINGS.cardAnimation){
+    css += '.cf{transition:none!important} .cf:hover{transform:none!important} .mcard{transition:none!important}';
+  }
+  styleEl.textContent = css;
+}
+
+// Apply on load
+applySettings();
+
+
+/* ── Turn Banner ── */
+let _bannerTimer = null;
+function showTurnBanner(text, sub, color){
+  const b = $i('turn-banner');
+  const bt = $i('turn-banner-text');
+  const bs = $i('turn-banner-sub');
+  if(!b) return;
+  if(_bannerTimer) clearTimeout(_bannerTimer);
+  bt.textContent = text;
+  bt.style.borderColor = color||'var(--gold)';
+  bt.style.textShadow = '0 0 40px '+(color||'rgba(245,200,66,.8)')+',0 4px 0 rgba(0,0,0,.6)';
+  if(bs) bs.textContent = sub||'';
+  b.classList.add('show');
+  _bannerTimer = setTimeout(()=>{ b.classList.remove('show'); }, 1800);
+}
+
 (function(){
   const TXT='⚓ Created by: zlim ⚓';
   const STY='position:fixed;bottom:8px;right:10px;z-index:9999;pointer-events:none;user-select:none;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:rgba(255,255,255,.65);white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,.9)';
@@ -3345,8 +3900,120 @@ function deleteDeck(i){
   setInterval(fix,3000);
 })();
 
+
+
+
+
+
 </script>
 
+<!-- ══ GLOBAL SETTINGS GEAR ══ -->
+<div id="gear-btn" onclick="openSettings()" title="Settings">⚙</div>
+
+<!-- ══ SETTINGS MODAL ══ -->
+<div class="mwrap" id="m-settings">
+  <div class="modal" style="max-width:500px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <h3 style="margin:0">⚙️ Settings</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeM('m-settings')">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--tx3);margin-bottom:20px">Preferences are saved automatically.</p>
+
+    <!-- ZOOM MODE -->
+    <div class="stg-section">
+      <div class="stg-title">🔍 Card Zoom Mode</div>
+      <div class="stg-desc">Choose how cards zoom when you interact with them.</div>
+      <div class="stg-options" id="stg-zoom">
+        <div class="stg-opt on" data-val="click" onclick="setSetting('zoomMode','click',this,'stg-zoom')">
+          <div class="stg-opt-icon">🖱️</div>
+          <div class="stg-opt-label">Right-Click</div>
+          <div class="stg-opt-desc">Right-click any card for full-screen zoom</div>
+        </div>
+        <div class="stg-opt" data-val="hover" onclick="setSetting('zoomMode','hover',this,'stg-zoom')">
+          <div class="stg-opt-icon">✨</div>
+          <div class="stg-opt-label">Hover</div>
+          <div class="stg-opt-desc">Hover over card for instant tooltip zoom</div>
+        </div>
+        <div class="stg-opt" data-val="window" onclick="setSetting('zoomMode','window',this,'stg-zoom')">
+          <div class="stg-opt-icon">🪟</div>
+          <div class="stg-opt-label">Mini Window</div>
+          <div class="stg-opt-desc">Right-click opens floating side panel</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAMEPLAY -->
+    <div class="stg-section">
+      <div class="stg-title">⚔️ Gameplay</div>
+      <div class="stg-row">
+        <div class="stg-row-info">
+          <div class="stg-row-label">Show Power Calculation</div>
+          <div class="stg-row-desc">Display +DON!! bonuses on cards in real time</div>
+        </div>
+        <label class="toggle-switch"><input type="checkbox" id="stg-powerCalc" onchange="setSettingToggle('showPowerCalc',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="stg-row">
+        <div class="stg-row-info">
+          <div class="stg-row-label">Card Animations</div>
+          <div class="stg-row-desc">Hover lift and transition effects on cards</div>
+        </div>
+        <label class="toggle-switch"><input type="checkbox" id="stg-anim" onchange="setSettingToggle('cardAnimation',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="stg-row">
+        <div class="stg-row-info">
+          <div class="stg-row-label">Deck Build Warnings</div>
+          <div class="stg-row-desc">Warn when saving a deck with fewer than 50 cards</div>
+        </div>
+        <label class="toggle-switch"><input type="checkbox" id="stg-deckwarn" onchange="setSettingToggle('deckWarnings',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+    <!-- BLOCK ROTATION -->
+    <div class="stg-section">
+      <div class="stg-title">🔄 Block Rotation</div>
+      <div class="stg-row">
+        <div class="stg-row-info">
+          <div class="stg-row-label">Enforce Standard Format</div>
+          <div class="stg-row-desc">Hide rotated-out cards (OP-01 to OP-04) in gameplay and deck builder</div>
+        </div>
+        <label class="toggle-switch"><input type="checkbox" id="stg-block" onchange="setSettingToggle('blockEnforced',this.checked);BLOCK.enforced=this.checked;updateDBBlockStatus()"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+    <!-- MUSIC -->
+    <div class="stg-section">
+      <div class="stg-title">🎵 Music</div>
+      <div class="stg-row">
+        <div class="stg-row-info">
+          <div class="stg-row-label">Auto-play OST</div>
+          <div class="stg-row-desc">Start music automatically when opening the OST player</div>
+        </div>
+        <label class="toggle-switch"><input type="checkbox" id="stg-music" onchange="setSettingToggle('soundEnabled',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+    <!-- GAMEPLAY TIPS -->
+    <div class="stg-section" style="background:rgba(58,143,232,.06);border:1px solid rgba(58,143,232,.2);border-radius:var(--r2);padding:14px">
+      <div class="stg-title" style="color:#93c5fd">💡 Gameplay Tips</div>
+      <ul style="font-size:12px;color:var(--tx2);line-height:2;padding-left:16px;margin:0">
+        <li><b>Select a card first</b>, then use the action buttons on the right</li>
+        <li><b>DON!! the leader</b> before your characters for +1000 power</li>
+        <li><b>Blocker cards</b> can redirect attacks — watch for the keyword</li>
+        <li><b>Rush cards</b> can attack the turn they're played</li>
+        <li><b>End your turn</b> when you have no more actions — DON!! resets each turn</li>
+        <li><b>Life cards</b> go to hand when damaged — use them strategically</li>
+        <li><b>Right-click</b> (or hover, if set above) any card to see full details</li>
+        <li><b>Deck Builder</b>: build 50-card decks, max 4 copies per card</li>
+      </ul>
+    </div>
+
+    <div class="mbtns"><button class="btn btn-primary" onclick="closeM('m-settings')">Done</button></div>
+  </div>
+</div>
+<div id="turn-banner">
+  <div id="turn-banner-text">YOUR TURN</div>
+  <div id="turn-banner-sub">Grand Line awaits, Captain</div>
+</div>
 <!-- ══ CARD ZOOM MODAL ══ -->
 <div id="zoom-modal" onclick="closeZoom()">
   <button class="zoom-close" onclick="closeZoom()">✕</button>
@@ -3363,33 +4030,19 @@ function deleteDeck(i){
     </div>
   </div>
 </div>
-
-<!-- ══ BLOCK ROTATION INFO MODAL ══ -->
 <div class="mwrap" id="m-block">
   <div class="modal" style="max-width:560px">
     <h3>OPTCG Block Rotation</h3>
-    <p>The Official OPTCG Standard format uses block rotation. Sets OP-01 to OP-04 are currently rotated out.</p>
+    <p>Sets OP-01 to OP-04 are currently rotated out of Standard.</p>
     <div style="background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px">
-      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px">⛔ Rotated Out</div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap">
-        <span class="zbadge" style="background:rgba(232,49,42,.15);color:var(--red)">OP-01</span>
-        <span class="zbadge" style="background:rgba(232,49,42,.15);color:var(--red)">OP-02</span>
-        <span class="zbadge" style="background:rgba(232,49,42,.15);color:var(--red)">OP-03</span>
-        <span class="zbadge" style="background:rgba(232,49,42,.15);color:var(--red)">OP-04</span>
-      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px">⛔ Rotated Out — OP-01, OP-02, OP-03, OP-04</div>
     </div>
     <div style="background:var(--bg3);border-radius:var(--r);padding:14px;margin-bottom:14px">
-      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px">✅ Legal in Standard</div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap">
-        <span class="zbadge" style="background:rgba(58,184,122,.12);color:var(--green)">OP-05 onwards</span>
-        <span class="zbadge" style="background:rgba(58,184,122,.12);color:var(--green)">All ST Starters</span>
-      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px">✅ Legal — OP-05 onwards + All Starters</div>
     </div>
     <div class="mbtns"><button class="btn btn-ghost" onclick="closeM('m-block')">Close</button></div>
   </div>
 </div>
-
-<!-- ══ FREE PLAY MODAL ══ -->
 <div class="mwrap" id="m-fp">
   <div class="modal" style="max-width:540px">
     <h3>Free Play Setup</h3>
@@ -3397,10 +4050,7 @@ function deleteDeck(i){
       <button id="fp-tab-prebuilt" class="btn" style="flex:1;border-radius:0;border:none;background:var(--red);color:#fff;font-weight:800;font-size:12px" onclick="fpTab('prebuilt')">📦 Pre-built Deck</button>
       <button id="fp-tab-saved" class="btn" style="flex:1;border-radius:0;border:none;background:var(--bg3);color:var(--tx2);font-weight:800;font-size:12px" onclick="fpTab('saved')">🃏 My Saved Deck</button>
     </div>
-    <div id="fp-panel-prebuilt">
-      <label>Your Leader</label>
-      <div class="ldr-grid" id="fp-ldr"></div>
-    </div>
+    <div id="fp-panel-prebuilt"><label>Your Leader</label><div class="ldr-grid" id="fp-ldr"></div></div>
     <div id="fp-panel-saved" style="display:none">
       <div id="fp-saved-list" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto"></div>
       <div id="fp-saved-none" style="font-size:12px;color:var(--tx3);text-align:center;padding:16px;display:none">No saved decks yet.</div>
@@ -3409,7 +4059,7 @@ function deleteDeck(i){
       <div class="block-toggle-bar">
         <label style="margin-bottom:0;white-space:nowrap">Block Rotation</label>
         <label class="toggle-switch"><input type="checkbox" id="fp-block-toggle" onchange="BLOCK.enforced=this.checked;updateBlockWarning()"><span class="toggle-slider"></span></label>
-        <span style="font-size:11px;color:var(--tx2);font-weight:600" id="fp-block-status">Off — All sets allowed</span>
+        <span style="font-size:11px;color:var(--tx2);font-weight:600" id="fp-block-status">Off</span>
         <span class="block-info-pill" onclick="closeM('m-fp');openM('m-block')">What's this?</span>
       </div>
       <div class="rotated-warning" id="fp-block-warn">⚠ Some cards may be from rotated sets.</div>
@@ -3423,8 +4073,6 @@ function deleteDeck(i){
     <div class="mbtns"><button class="btn btn-ghost" onclick="closeM('m-fp')">Cancel</button><button class="btn btn-primary" onclick="startFP()">Start Game →</button></div>
   </div>
 </div>
-
-<!-- ══ ATTACK MODAL ══ -->
 <div class="mwrap" id="m-atk">
   <div class="modal" style="max-width:400px">
     <h3>⚔ Declare Attack</h3>
@@ -3433,8 +4081,6 @@ function deleteDeck(i){
     <div class="mbtns"><button class="btn btn-ghost" onclick="closeM('m-atk')">Cancel</button></div>
   </div>
 </div>
-
-<!-- ══ RESET MODAL ══ -->
 <div class="mwrap" id="m-reset">
   <div class="modal" style="max-width:360px">
     <h3>Reset Game?</h3>
@@ -3445,14 +4091,12 @@ function deleteDeck(i){
     </div>
   </div>
 </div>
-
-<!-- ══ USER MENU MODAL ══ -->
 <div class="mwrap" id="m-user">
   <div class="modal" style="max-width:340px">
     <h3 id="um-name">—</h3><p id="um-info" style="margin-bottom:18px"></p>
     <div style="display:flex;flex-direction:column;gap:7px">
       <button class="btn" style="width:100%;background:var(--gold);color:#1a1200;font-weight:800" onclick="closeM('m-user');openEditProfile()">👤 My Profile</button>
-      <button class="btn" style="width:100%;background:var(--bg4);color:var(--tx);border:1px solid var(--bdr2)" onclick="closeM('m-user');showScreen('screen-history');renderHistory()">📊 View Game History</button>
+      <button class="btn" style="width:100%;background:var(--bg4);color:var(--tx);border:1px solid var(--bdr2)" onclick="closeM('m-user');showScreen('screen-history');renderHistory()">📊 Game History</button>
       <button id="um-google" class="btn btn-google" style="width:100%;display:none" onclick="closeM('m-user');signInWithGoogle()">
         <svg width="16" height="16" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
         Link Google Account
@@ -3462,10 +4106,8 @@ function deleteDeck(i){
     <div class="mbtns" style="margin-top:11px"><button class="btn btn-ghost" onclick="closeM('m-user')">Close</button></div>
   </div>
 </div>
-
 <!-- ══ GAME SCREEN ══ -->
 <div class="screen" id="screen-game">
-  <!-- Mobile stats floating button -->
   <button class="mobile-stats-btn" id="mobile-stats-btn" onclick="toggleMobileStats()">📊 Stats</button>
   <div class="mobile-stats-panel" id="mobile-stats-panel">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
@@ -3519,7 +4161,7 @@ function deleteDeck(i){
     </div>
     <div class="gcol" style="overflow-y:auto">
       <div class="gzone" id="opp-zone">
-        <div class="zlbl">Opponent's Field</div>
+        <div class="zlbl">Opponent's Field <span style="font-size:9px;font-weight:700;color:var(--tx3)">(right-click to zoom)</span></div>
         <div class="lrow" id="o-lrow"></div>
         <div class="crow" id="o-crow"></div>
         <div class="hlbl">Opponent's Hand</div>
@@ -3529,12 +4171,13 @@ function deleteDeck(i){
         <div class="zlbl">Your Field <span class="youchip">YOU</span></div>
         <div class="lrow" id="m-lrow"></div>
         <div class="crow" id="m-crow"></div>
-        <div class="hlbl">Your Hand — tap to select · <span style="color:var(--tx3)">right-click to zoom</span></div>
+        <div class="hlbl">Your Hand — tap to select · <span style="background:rgba(245,200,66,.2);color:var(--gold);font-weight:900;padding:1px 7px;border-radius:4px;border:1px solid rgba(245,200,66,.45);text-decoration:underline;text-underline-offset:3px">🔍 Right-click any card to zoom</span></div>
         <div class="harea" id="m-harea"></div>
       </div>
     </div>
     <div class="gcol" style="display:flex;flex-direction:column;overflow:hidden;min-height:0">
-      <div class="apanel" style="flex-shrink:0">
+      <div class="apanel" style="flex-shrink:0;position:relative">
+        <div id="game-notify"></div>
         <div class="zlbl" style="margin-bottom:1px;font-size:11px">Actions</div>
         <button class="abtn ap" id="btn-next" onclick="nextPhase()">▶ Next Phase</button>
         <button class="abtn as" id="btn-play" onclick="doPlay()" disabled>＋ Play Selected</button>
@@ -3546,7 +4189,6 @@ function deleteDeck(i){
       </div>
       <div class="scbox"><div style="font-size:10px;color:var(--tx3);font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">Selected Card</div><div id="sc-inner" style="color:var(--tx3);font-size:11px">Click a card to inspect</div></div>
     </div>
-    <!-- Tutorial Sidebar -->
     <div class="gcol tutcol" id="tut-col" style="display:none">
       <div class="tutcol-inner">
         <div class="tutmeta"><div class="tutnum" id="tut-n">1</div><div class="tuttitle" id="tut-t">—</div></div>
@@ -3561,9 +4203,8 @@ function deleteDeck(i){
     </div>
   </div>
 </div>
-
 <!-- ══ WINNER ══ -->
-<div class="screen" id="screen-winner" style="background:var(--bg);align-items:center;justify-content:center">
+<div class="screen" id="screen-winner" style="align-items:center;justify-content:center">
   <div style="text-align:center;padding:40px">
     <div class="win-title" id="win-title">VICTORY!</div>
     <p id="win-sub" style="font-size:15px;color:var(--tx2);margin:14px 0 28px"></p>
@@ -3573,15 +4214,12 @@ function deleteDeck(i){
     </div>
   </div>
 </div>
-
 <!-- ══ MUSIC PLAYER ══ -->
 <div id="music-player">
-  <!-- Collapsed toggle pill -->
   <div id="music-toggle" onclick="toggleMusicPanel()" title="One Piece OST">
     <span id="music-icon">🎵</span>
     <span id="music-label">OST</span>
   </div>
-  <!-- Expanded controls -->
   <div id="music-controls">
     <div>
       <div class="mc-title">🎵 One Piece OST</div>
@@ -3594,15 +4232,12 @@ function deleteDeck(i){
       <div class="mc-btn" id="mc-shuffle-btn" onclick="toggleShuffle()" title="Shuffle" style="font-size:11px">🔀</div>
     </div>
     <div class="mc-vol-row">
-      <span class="mc-vol-icon" onclick="toggleMute()">🔊</span>
-      <input type="range" id="vol-slider" min="0" max="100" value="40"
-        oninput="setVolume(this.value)">
+      <span class="mc-vol-icon" onclick="toggleMute()">🔇</span>
+      <input type="range" id="vol-slider" min="0" max="100" value="40" oninput="setVolume(this.value)">
       <span class="mc-vol-pct" id="vol-pct">40%</span>
     </div>
   </div>
 </div>
-
-<!-- Hidden YouTube IFrame -->
 <div id="yt-iframe"></div>
 
 </body>

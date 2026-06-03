@@ -339,7 +339,7 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
    CARD FRAME
 ════════════════════════════════════════ */
 .cf{
-  width:72px;height:100px;border-radius:6px;border:1px solid var(--bdr2);
+  width:90px;height:125px;border-radius:6px;border:1px solid var(--bdr2);
   background:var(--bg3);cursor:pointer;position:relative;flex-shrink:0;overflow:hidden;
   transition:transform .15s,box-shadow .15s;
   display:flex;align-items:center;justify-content:flex-end;flex-direction:column;
@@ -354,11 +354,11 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
 .cf-fb{position:absolute;bottom:0;left:0;right:0;
   background:linear-gradient(transparent,rgba(0,0,0,.85));
   padding:3px 4px;z-index:2;display:flex;flex-direction:column;align-items:flex-start}
-.cf-nm{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;
+.cf-nm{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
   color:#fff;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.cf-pw{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--gold);line-height:1}
+.cf-pw{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--gold);line-height:1}
 .cbadge{position:absolute;top:3px;left:3px;background:rgba(0,0,0,.75);color:#fff;
-  font-size:10px;font-weight:800;width:17px;height:17px;border-radius:50%;
+  font-size:11px;font-weight:800;width:20px;height:20px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;z-index:3;border:1px solid rgba(255,255,255,.2)}
 .dbadge2{position:absolute;top:3px;right:3px;background:var(--don);color:#1a1200;
   font-size:8px;font-weight:900;padding:1px 4px;border-radius:5px;z-index:3}
@@ -383,8 +383,8 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
   font-weight:900;box-shadow:0 0 12px rgba(245,200,66,.4)}
 .ppill.done{color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.15)}
 .psep{color:rgba(255,255,255,.15);font-size:10px}
-.glayout{flex:1;display:grid;grid-template-columns:160px 1fr 210px;gap:0;overflow:hidden;min-height:0}
-#screen-game.tut-mode .glayout{grid-template-columns:160px 1fr 210px 210px}
+.glayout{flex:1;display:grid;grid-template-columns:200px 1fr 260px;gap:0;overflow:hidden;min-height:0}
+#screen-game.tut-mode .glayout{grid-template-columns:200px 1fr 260px 260px}
 /* Left col */
 .gcol:first-child{background:rgba(7,9,15,.7);border-right:1px solid rgba(255,255,255,.06);
   padding:10px;gap:8px;overflow-y:auto;display:flex;flex-direction:column}
@@ -431,8 +431,8 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
 #opp-zone{border-bottom:1px solid rgba(232,49,42,.15)}
 .gzone.mine.aturn{background:rgba(58,143,232,.04)}
 .lrow{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.crow{display:flex;flex-wrap:wrap;gap:6px;min-height:80px;align-items:center}
-.harea{display:flex;gap:5px;overflow-x:auto;padding:4px 0;min-height:86px;align-items:center;
+.crow{display:flex;flex-wrap:wrap;gap:8px;min-height:100px;align-items:center}
+.harea{display:flex;gap:5px;overflow-x:auto;padding:4px 0;min-height:108px;align-items:center;
   scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
 .hlbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
   letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.3);margin:2px 0}
@@ -594,13 +594,13 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
 #zoom-modal{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.88);
   display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
 #zoom-modal.open{display:flex}
-.zoom-inner{display:flex;gap:24px;align-items:flex-start;max-width:780px;width:100%;pointer-events:none}
-.zoom-img-wrap{flex-shrink:0;width:260px;border-radius:10px;overflow:hidden;
+.zoom-inner{display:flex;gap:28px;align-items:flex-start;max-width:960px;width:100%;pointer-events:none}
+.zoom-img-wrap{flex-shrink:0;width:325px;border-radius:10px;overflow:hidden;
   box-shadow:0 20px 60px rgba(0,0,0,.7);background:var(--bg3)}
 .zoom-img-wrap img{width:100%;display:block}
 .zoom-info{flex:1;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r3);
   padding:22px;pointer-events:all}
-.zoom-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.05em;margin-bottom:4px}
+.zoom-name{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.05em;margin-bottom:4px}
 .zoom-badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
 .zbadge{font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;
   letter-spacing:.04em;text-transform:uppercase}
@@ -1545,84 +1545,157 @@ function isBlockLegal(cardId){
 }
 
 const LEADERS = [
-  // ST01 Straw Hat Crew — Red Leader
-  {id:'ST01-001',name:'Monkey D. Luffy',color:'Red',power:5000,life:5,
-   effect:"[Activate:Main] Once per turn: Give up to 1 DON!! card to this Leader."},
-  // ST02 Worst Generation — Green Leader
-  {id:'ST02-001',name:'Eustass"Captain"Kid',color:'Green',power:5000,life:5,
-   effect:"[Activate:Main] Once per turn: (3) Rest 3 DON!! in your cost area: You may discard 1 card from your hand: Switch this Leader to Active."},
-  // ST03 Seven Warlords of the Sea — Blue Leader
-  {id:'ST03-001',name:'Crocodile',color:'Blue',power:5000,life:5,
-   effect:"[Activate:Main] Once per turn: (4) Rest 4 DON!! in your cost area: Return up to 1 cost 5 or lower Character to its owner's hand."},
-  // OP01 Romance Dawn Leaders
-  {id:'OP01-001',name:'Roronoa Zoro',color:'Red',power:5000,life:5,
+  {id:'ST01-001',name:'Monkey D. Luffy',color:'Red',power:5000,life:5,affiliation:'Straw Hat Crew',series:'ST01',
+   effect:"[Activate:Main] Once per turn: Give up to 1 DON!! card from your cost area to this Leader."},
+  {id:'ST02-001',name:'Eustass\"Captain\"Kid',color:'Green',power:5000,life:5,affiliation:'Worst Generation/Kid Pirates',series:'ST02',
+   effect:"[Activate:Main] Once per turn: ③ You may discard 1 card from your hand: Switch this Leader to Active."},
+  {id:'ST03-001',name:'Crocodile',color:'Blue',power:5000,life:5,affiliation:'Seven Warlords of the Sea',series:'ST03',
+   effect:"[Activate:Main] Once per turn: ④ Return up to 1 cost 5 or lower Character to its owner's hand."},
+  {id:'OP01-001',name:'Roronoa Zoro',color:'Red',power:5000,life:5,affiliation:'Straw Hat Crew',series:'OP01',
    effect:"[DON!! x1][Your Turn] All of your Characters gain +1000 power."},
-  {id:'OP01-060',name:'Donquixote Doflamingo',color:'Red',power:5000,life:5,
-   effect:"[DON!! x2][When Attacking] You may rest the specified DON!! cards: Reveal 1 card from the top of your deck. If it is a [The Seven Warlords of the Sea] type Character with cost 4 or less, you may play that card rested."},
-  // OP05 Awakening of the New Era
-  {id:'OP05-118',name:'Kaido',color:'Purple',power:6000,life:3,
+  {id:'OP01-060',name:'Donquixote Doflamingo',color:'Red',power:5000,life:5,affiliation:'Seven Warlords/Donquixote Pirates',series:'OP01',
+   effect:"[DON!! x2][When Attacking] Reveal 1 card from the top of your deck. If it is a [Seven Warlords of the Sea] type Character with cost 4 or less, you may play that card rested."},
+  {id:'OP02-001',name:'Edward Newgate',color:'Purple',power:5000,life:5,affiliation:'Whitebeard Pirates',series:'OP02',
+   effect:"[DON!! x1][When Attacking] Give up to 1 DON!! card from your cost area to 1 of your Characters."},
+  {id:'OP02-093',name:'Monkey D. Luffy',color:'Red',power:5000,life:5,affiliation:'Straw Hat Crew',series:'OP02',
    effect:"[On Attack] You may trash 1 card from your hand: This Leader gains +2000 power during this battle."},
+  {id:'OP03-001',name:'Nami',color:'Blue',power:5000,life:4,affiliation:'Straw Hat Crew',series:'OP03',
+   effect:"[Activate:Main] Once per turn: ① Look at the top 2 cards of your deck and place them in any order."},
+  {id:'OP03-077',name:'Franky',color:'Green',power:5000,life:5,affiliation:'Straw Hat Crew',series:'OP03',
+   effect:"[DON!! x2][Your Turn] All of your Characters gain +1000 power."},
+  {id:'OP04-001',name:'Sanji',color:'Red',power:5000,life:5,affiliation:'Straw Hat Crew',series:'OP04',
+   effect:"[DON!! x1][When Attacking] Up to 1 of your Characters with a power of 5000 or less gains +2000 power during this battle."},
+  {id:'OP04-058',name:'Boa Hancock',color:'Purple',power:5000,life:5,affiliation:'Seven Warlords/Kuja Pirates',series:'OP04',
+   effect:"[Activate:Main] Once per turn: ② Look at the top 5 cards of your deck. Add 1 card to your hand and return the rest to the bottom in any order."},
+  {id:'OP05-118',name:'Kaido',color:'Purple',power:6000,life:3,affiliation:'Beasts Pirates',series:'OP05',
+   effect:"[On Attack] You may trash 1 card from your hand: This Leader gains +2000 power during this battle."},
+  {id:'OP05-001',name:'Trafalgar Law',color:'Blue',power:5000,life:4,affiliation:'Heart Pirates/Seven Warlords',series:'OP05',
+   effect:"[Activate:Main] Once per turn: Place 1 card from your hand at the bottom of your deck: Draw 1 card."},
+  {id:'OP06-001',name:'Roronoa Zoro',color:'Green',power:5000,life:5,affiliation:'Straw Hat Crew',series:'OP06',
+   effect:"[DON!! x2][When Attacking] Your opponent cannot activate Blockers with a power of 5000 or less during this battle."},
+  {id:'OP06-022',name:'Sanji',color:'Blue',power:5000,life:5,affiliation:'Straw Hat Crew',series:'OP06',
+   effect:"[Activate:Main] Once per turn: ② Return up to 1 cost 3 or lower Character to its owner's hand."},
 ];
+
 
 const CARDS = [
   // ══ ST01 Straw Hat Crew (Red) ══
-  {id:'ST01-002',name:'Usopp',type:'character',color:'Red',cost:2,power:2000,counter:1000,
+  {id:'ST01-002',name:'Usopp',type:'character',color:'Red',cost:2,power:2000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[DON!! x2][When Attacking] Your opponent cannot activate Blockers with 5000 or higher power during this battle. [Trigger] You may play this card."},
-  {id:'ST01-004',name:'Sanji',type:'character',color:'Red',cost:3,power:4000,counter:1000,
+  {id:'ST01-004',name:'Sanji',type:'character',color:'Red',cost:3,power:4000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[DON!! x2][Rush] This card can attack on the turn it is played."},
-  {id:'ST01-005',name:'Jinbe',type:'character',color:'Red',cost:3,power:5000,counter:1000,
+  {id:'ST01-005',name:'Jinbe',type:'character',color:'Red',cost:3,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[DON!! x1][When Attacking] 1 of your other Leader or Character cards gains +1000 power during this turn."},
-  {id:'ST01-006',name:'Tony Tony Chopper',type:'character',color:'Red',cost:1,power:1000,counter:0,
-   effect:"[Blocker] (Rest this card to make it the target of your opponent's attack.)"},
-  {id:'ST01-007',name:'Nami',type:'character',color:'Red',cost:1,power:1000,counter:1000,
+  {id:'ST01-006',name:'Tony Tony Chopper',type:'character',color:'Red',cost:1,power:1000,counter:0,affiliation:'Straw Hat Crew',series:'ST01',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.)"},
+  {id:'ST01-007',name:'Nami',type:'character',color:'Red',cost:1,power:1000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[Activate:Main] Once per turn: Equip 1 of your rested DON!! cards to your Leader or 1 of your Characters."},
-  {id:'ST01-008',name:'Nico Robin',type:'character',color:'Red',cost:3,power:5000,counter:1000,
-   effect:''},
-  {id:'ST01-009',name:'Nefertari Vivi',type:'character',color:'Red',cost:2,power:4000,counter:1000,
-   effect:''},
-  {id:'ST01-010',name:'Franky',type:'character',color:'Red',cost:4,power:6000,counter:1000,
-   effect:''},
-  {id:'ST01-011',name:'Brook',type:'character',color:'Red',cost:2,power:3000,counter:2000,
+  {id:'ST01-008',name:'Nico Robin',type:'character',color:'Red',cost:3,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
+   effect:"[On Play] Look at 5 cards from the top of your deck; reveal up to 1 [Straw Hat Crew] card and add it to your hand. Return the rest to the bottom in any order."},
+  {id:'ST01-009',name:'Nefertari Vivi',type:'character',color:'Red',cost:2,power:4000,counter:1000,affiliation:'Alabasta Kingdom',series:'ST01',
+   effect:"[On Play] If your Leader is [Straw Hat Crew] type, look at 5 cards from the top of your deck; reveal up to 1 [Alabasta] card and add it to your hand."},
+  {id:'ST01-010',name:'Franky',type:'character',color:'Red',cost:4,power:6000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
+   effect:"[On Play] Look at 5 cards from the top of your deck; reveal up to 1 [Straw Hat Crew] type card and add it to your hand. Return the rest to the bottom."},
+  {id:'ST01-011',name:'Brook',type:'character',color:'Red',cost:2,power:3000,counter:2000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[On Play] Attach up to 2 of your rested DON!! cards to your Leader or 1 of your Characters."},
-  {id:'ST01-012',name:'Monkey D. Luffy',type:'character',color:'Red',cost:5,power:6000,counter:0,
+  {id:'ST01-012',name:'Monkey D. Luffy',type:'character',color:'Red',cost:5,power:6000,counter:0,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[Rush] This card can attack on the turn it is played. [DON!! x2][When Attacking] Your opponent cannot activate Blocker during this battle."},
-  {id:'ST01-013',name:'Roronoa Zoro',type:'character',color:'Red',cost:3,power:5000,counter:1000,
+  {id:'ST01-013',name:'Roronoa Zoro',type:'character',color:'Red',cost:3,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'ST01',
    effect:"[DON!! x1] This Character gains +1000 power."},
-  {id:'ST01-014',name:'Guard Point',type:'event',color:'Red',cost:1,power:0,counter:3000,
+  {id:'ST01-014',name:'Guard Point',type:'event',color:'Red',cost:1,power:0,counter:3000,affiliation:'',series:'ST01',
    effect:"[Counter] Up to 1 of your Leader or Character cards gains +3000 power during this battle. [Trigger] Up to 1 of your Leader or Character cards gains +1000 power during this turn."},
-  {id:'ST01-015',name:'Gum-Gum Jet Pistol',type:'event',color:'Red',cost:4,power:0,counter:0,
+  {id:'ST01-015',name:'Gum-Gum Jet Pistol',type:'event',color:'Red',cost:4,power:0,counter:0,affiliation:'',series:'ST01',
    effect:"[Main] K.O. up to 1 of your opponent's Character cards with a power of 6000 or less. [Trigger] You may activate this card's [Main] effect."},
-  {id:'ST01-016',name:'Diable Jambe',type:'event',color:'Red',cost:1,power:0,counter:0,
-   effect:"[Main] Choose 1 of your [Straw Hat Crew] Leader or Character cards: During this turn when that card attacks, your opponent cannot activate Blocker. [Trigger] K.O. up to 1 of your opponent's cost 3 or lower Characters with Blocker."},
+  {id:'ST01-016',name:'Diable Jambe',type:'event',color:'Red',cost:1,power:0,counter:0,affiliation:'',series:'ST01',
+   effect:"[Main] Choose 1 of your [Straw Hat Crew] Leader or Character cards: during this turn when that card attacks your opponent cannot activate Blocker. [Trigger] K.O. up to 1 of your opponent's cost 3 or lower Blocker Characters."},
 
   // ══ ST02 Worst Generation (Green) ══
-  {id:'ST02-009',name:'Trafalgar Law',type:'character',color:'Green',cost:5,power:6000,counter:1000,
+  {id:'ST02-009',name:'Trafalgar Law',type:'character',color:'Green',cost:5,power:6000,counter:1000,affiliation:'Heart Pirates/Worst Generation',series:'ST02',
    effect:"[On Play] Draw 2 cards, then trash 2 cards from your hand."},
-  {id:'ST02-012',name:'Bepo',type:'character',color:'Green',cost:2,power:2000,counter:1000,
-   effect:"[Blocker] (Rest this card to make it the target of your opponent's attack.)"},
-  {id:'ST02-013',name:'Eustass"Captain"Kid',type:'character',color:'Green',cost:7,power:7000,counter:0,
-   effect:"[Blocker] (Rest this card to make it the target of your opponent's attack.) [DON!! x1][End of Your Turn] Switch this Character to Active."},
+  {id:'ST02-012',name:'Bepo',type:'character',color:'Green',cost:2,power:2000,counter:1000,affiliation:'Heart Pirates',series:'ST02',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.)"},
+  {id:'ST02-013',name:'Eustass\"Captain\"Kid',type:'character',color:'Green',cost:7,power:7000,counter:0,affiliation:'Kid Pirates/Worst Generation',series:'ST02',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.) [DON!! x1][End of Your Turn] Switch this Character to Active."},
 
   // ══ ST03 Seven Warlords of the Sea (Blue) ══
-  {id:'ST03-006',name:'Jinbe',type:'character',color:'Blue',cost:2,power:4000,counter:1000,
-   effect:''},
-  {id:'ST03-008',name:'Trafalgar Law',type:'character',color:'Blue',cost:4,power:6000,counter:1000,
-   effect:"[On Play] Draw 1 card."},
-  {id:'ST03-009',name:'Donquixote Doflamingo',type:'character',color:'Blue',cost:6,power:8000,counter:1000,
+  {id:'ST03-006',name:'Jinbe',type:'character',color:'Blue',cost:2,power:4000,counter:1000,affiliation:'Seven Warlords of the Sea/Sun Pirates',series:'ST03',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.)"},
+  {id:'ST03-008',name:'Trafalgar Law',type:'character',color:'Blue',cost:4,power:6000,counter:1000,affiliation:'Seven Warlords of the Sea/Heart Pirates',series:'ST03',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.) [On Play] Draw 1 card."},
+  {id:'ST03-009',name:'Donquixote Doflamingo',type:'character',color:'Blue',cost:6,power:8000,counter:1000,affiliation:'Seven Warlords/Donquixote Pirates',series:'ST03',
    effect:"[On Play] Return up to 1 cost 4 or lower Character to its owner's hand."},
-  {id:'ST03-014',name:'Marshall D. Teach',type:'character',color:'Blue',cost:8,power:9000,counter:0,
-   effect:"[On Play] Your opponent discards down to 4 cards."},
+  {id:'ST03-014',name:'Marshall D. Teach',type:'character',color:'Blue',cost:8,power:9000,counter:0,affiliation:'Seven Warlords/Blackbeard Pirates',series:'ST03',
+   effect:"[On Play] Your opponent discards down to 4 cards in hand."},
 
   // ══ OP01 Romance Dawn ══
-  {id:'OP01-024',name:'Monkey D. Luffy',type:'character',color:'Red',cost:5,power:6000,counter:1000,
+  {id:'OP01-016',name:'Portgas D. Ace',type:'character',color:'Red',cost:4,power:5000,counter:1000,affiliation:'Whitebeard Pirates/Spade Pirates',series:'OP01',
    effect:"[Rush] This card can attack on the turn it is played."},
-  {id:'OP01-025',name:'Roronoa Zoro',type:'character',color:'Red',cost:4,power:5000,counter:1000,
+  {id:'OP01-024',name:'Monkey D. Luffy',type:'character',color:'Red',cost:5,power:6000,counter:1000,affiliation:'Straw Hat Crew',series:'OP01',
+   effect:"[Rush] This card can attack on the turn it is played."},
+  {id:'OP01-025',name:'Roronoa Zoro',type:'character',color:'Red',cost:4,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'OP01',
    effect:"[On Play] Up to 1 of your Leader or Character cards gains +1000 power during this turn."},
-  {id:'OP01-054',name:'X.Drake',type:'character',color:'Red',cost:5,power:6000,counter:1000,
-   effect:"[Blocker] (Rest this card to make it the target of your opponent's attack.)"},
-  {id:'OP01-120',name:'Shanks',type:'character',color:'Red',cost:9,power:10000,counter:0,
+  {id:'OP01-040',name:'Edward Newgate',type:'character',color:'Purple',cost:8,power:9000,counter:1000,affiliation:'Whitebeard Pirates/Four Emperors',series:'OP01',
+   effect:"[On Play] Up to 2 of your Leader or Character cards gain +1000 power during this turn."},
+  {id:'OP01-054',name:'X.Drake',type:'character',color:'Red',cost:5,power:6000,counter:1000,affiliation:'Worst Generation/SWORD',series:'OP01',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.)"},
+  {id:'OP01-093',name:'Nami',type:'character',color:'Blue',cost:2,power:2000,counter:2000,affiliation:'Straw Hat Crew',series:'OP01',
+   effect:"[On Play] Look at the top 3 cards of your deck; reveal up to 1 Blue card and add it to your hand. Return the rest to the bottom."},
+  {id:'OP01-120',name:'Shanks',type:'character',color:'Red',cost:9,power:10000,counter:0,affiliation:'Red Hair Pirates/Four Emperors',series:'OP01',
    effect:"[On Play] Your opponent cannot add cards to their Life cards this turn. If your opponent has 0 Life cards, they take 1 damage."},
+
+  // ══ OP02 Paramount War ══
+  {id:'OP02-013',name:'Portgas D. Ace',type:'character',color:'Purple',cost:6,power:7000,counter:1000,affiliation:'Whitebeard Pirates/Spade Pirates',series:'OP02',
+   effect:"[On Play] ② K.O. up to 1 of your opponent's Characters with a cost of 4 or less."},
+  {id:'OP02-026',name:'Marco',type:'character',color:'Purple',cost:4,power:6000,counter:1000,affiliation:'Whitebeard Pirates',series:'OP02',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.) [On K.O.] Place this card at the bottom of your Life cards face down."},
+  {id:'OP02-049',name:'Boa Hancock',type:'character',color:'Blue',cost:5,power:6000,counter:1000,affiliation:'Seven Warlords/Kuja Pirates',series:'OP02',
+   effect:"[On Play] Your opponent cannot play Characters with a cost of 2 or less during their next Main Phase."},
+  {id:'OP02-072',name:'Trafalgar Law',type:'character',color:'Red',cost:3,power:5000,counter:1000,affiliation:'Heart Pirates/Worst Generation',series:'OP02',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.) [Activate:Main] Once per turn: Swap this card with 1 of your Life cards face down."},
+  {id:'OP02-099',name:'Sengoku',type:'character',color:'Blue',cost:7,power:7000,counter:0,affiliation:'Navy',series:'OP02',
+   effect:"[On Play] Look at the top 5 cards of your deck. Add up to 2 [Navy] cards to your hand. Return the rest to the bottom in any order."},
+
+  // ══ OP03 Pillars of Strength ══
+  {id:'OP03-022',name:'Charlotte Katakuri',type:'character',color:'Black',cost:7,power:8000,counter:0,affiliation:'Big Mom Pirates',series:'OP03',
+   effect:"[On Play] ① Look at the top 3 cards of your opponent's deck and return them in any order."},
+  {id:'OP03-040',name:'Big Mom',type:'character',color:'Purple',cost:9,power:10000,counter:0,affiliation:'Big Mom Pirates/Four Emperors',series:'OP03',
+   effect:"[On Play] Place up to 2 cards from your opponent's hand at the bottom of their deck. Then draw 2 cards."},
+  {id:'OP03-058',name:'Brook',type:'character',color:'Black',cost:4,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'OP03',
+   effect:"[Rush] This card can attack on the turn it is played. [DON!! x1][When Attacking] This Character gains +2000 power during this battle."},
+  {id:'OP03-092',name:'Jinbe',type:'character',color:'Blue',cost:5,power:6000,counter:1000,affiliation:'Straw Hat Crew/Fish-Man Pirates',series:'OP03',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.) [On Play] ② Return up to 1 cost 4 or lower Character to its owner's hand."},
+
+  // ══ OP04 Kingdoms of Intrigue ══
+  {id:'OP04-019',name:'Monkey D. Luffy',type:'character',color:'Red',cost:7,power:7000,counter:0,affiliation:'Straw Hat Crew',series:'OP04',
+   effect:"[Rush] This card can attack on the turn it is played. [DON!! x2][When Attacking] K.O. up to 1 of your opponent's Characters with a cost of 5 or less."},
+  {id:'OP04-025',name:'Roronoa Zoro',type:'character',color:'Green',cost:4,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'OP04',
+   effect:"[On Play] ② Look at the top 4 cards of your deck; reveal up to 1 Green card and add it to your hand. Return the rest to the bottom."},
+  {id:'OP04-043',name:'Nami',type:'character',color:'Green',cost:1,power:2000,counter:2000,affiliation:'Straw Hat Crew',series:'OP04',
+   effect:"[On Play] Look at the top 2 cards of your deck and place them in any order."},
+  {id:'OP04-052',name:'Nico Robin',type:'character',color:'Blue',cost:4,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'OP04',
+   effect:"[Activate:Main] ② Once per turn: You may trash 1 card from your hand: Draw 1 card."},
+
+  // ══ OP05 Awakening of the New Era ══
+  {id:'OP05-022',name:'Monkey D. Luffy',type:'character',color:'Red',cost:5,power:6000,counter:1000,affiliation:'Straw Hat Crew',series:'OP05',
+   effect:"[Rush] This card can attack on the turn it is played. [DON!! x1][When Attacking] Your opponent cannot activate Blockers during this battle."},
+  {id:'OP05-060',name:'Yamato',type:'character',color:'Green',cost:5,power:6000,counter:1000,affiliation:'Beasts Pirates',series:'OP05',
+   effect:"[On Play] Give up to 2 DON!! cards from your DON!! deck."},
+  {id:'OP05-080',name:'King',type:'character',color:'Purple',cost:6,power:7000,counter:0,affiliation:'Beasts Pirates',series:'OP05',
+   effect:"[Blocker] (After your opponent declares an attack, you may rest this card to make it the new target of the attack.) [DON!! x1][End of Opponent's Turn] This Character gains +2000 power until the start of your next turn."},
+  {id:'OP05-112',name:'Queen',type:'character',color:'Purple',cost:5,power:6000,counter:1000,affiliation:'Beasts Pirates',series:'OP05',
+   effect:"[On Play] ① K.O. up to 1 of your opponent's Characters with a cost of 3 or less."},
+
+  // ══ OP06 Wings of the Captain ══
+  {id:'OP06-013',name:'Roronoa Zoro',type:'character',color:'Green',cost:6,power:7000,counter:0,affiliation:'Straw Hat Crew',series:'OP06',
+   effect:"[Rush] This card can attack on the turn it is played. [On Attack] K.O. up to 1 of your opponent's rested Characters with a cost of 4 or less."},
+  {id:'OP06-025',name:'Nami',type:'character',color:'Blue',cost:2,power:3000,counter:2000,affiliation:'Straw Hat Crew',series:'OP06',
+   effect:"[On Play] ① Look at the top 3 cards of your deck; add up to 1 card to your hand. Return the rest to the bottom."},
+  {id:'OP06-049',name:'Sanji',type:'character',color:'Red',cost:4,power:6000,counter:1000,affiliation:'Straw Hat Crew',series:'OP06',
+   effect:"[Rush] This card can attack on the turn it is played. [DON!! x1][When Attacking] This Character gains +2000 power during this battle."},
+  {id:'OP06-080',name:'Nico Robin',type:'character',color:'Purple',cost:4,power:5000,counter:1000,affiliation:'Straw Hat Crew',series:'OP06',
+   effect:"[On Play] You may trash 1 card from your hand: Draw 2 cards."},
 ];
+
 
 const PHASES = ['Refresh','Draw','DON!!','Main','End'];
 const HINTS = {
@@ -1737,6 +1810,10 @@ function loadFB(){
             fbUser=u;
             if(u){$i('sync-badge').style.display='block';loadCloudProfile(u.uid);}
           });
+          // Handle redirect result (mobile sign-in)
+          fbAuth.getRedirectResult().then(result=>{
+            if(result&&result.user) console.log('Redirect sign-in success');
+          }).catch(e=>{ if(e.code!=='auth/no-auth-event') console.warn('Redirect result:',e); });
           res();
         }catch(e){fbLoading=false;rej(e);}
       }};
@@ -1751,8 +1828,17 @@ async function signInWithGoogle(){
   try{await loadFB();}catch(e){toast('Could not load Firebase — check internet.','err');return;}
   try{
     const p=new firebase.auth.GoogleAuthProvider();p.addScope('profile');
-    await fbAuth.signInWithPopup(p);
-  }catch(e){if(e.code!=='auth/popup-closed-by-user')toast('Sign-in failed: '+e.message,'err');}
+    // Try popup first; fall back to redirect on mobile / popup-blocked
+    try{
+      await fbAuth.signInWithPopup(p);
+    }catch(popupErr){
+      if(popupErr.code==='auth/popup-blocked'||popupErr.code==='auth/operation-not-supported-in-this-environment'){
+        await fbAuth.signInWithRedirect(p);
+      }else if(popupErr.code!=='auth/popup-closed-by-user'){
+        toast('Sign-in failed: '+popupErr.message,'err');
+      }
+    }
+  }catch(e){toast('Sign-in error: '+e.message,'err');}
 }
 
 function signOut(){if(fbAuth)fbAuth.signOut();USER={name:'',xp:'beginner',lang:'English',uid:null,isGuest:true};history=[];fbUser=null;$i('sync-badge').style.display='none';showScreen('screen-auth');}
@@ -3075,8 +3161,9 @@ function onYouTubeIframeAPIReady(){
     videoId:'hVu5_LL7iHk',
     playerVars:{
       listType: 'playlist',
-      list:     'PLbE7WqfE1jDu9EXubPF_2gbj0WAhJBCwh',  // One Piece OST playlist
-      autoplay:  0,
+      list:     'PLbE7WqfE1jDu9EXubPF_2gbj0WAhJBCwh',
+      autoplay:  1,
+      mute:      1,   // muted autoplay allowed by browsers; user unmutes via slider
       loop:      1,
       controls:  0,
       disablekb: 1,
@@ -3084,7 +3171,6 @@ function onYouTubeIframeAPIReady(){
       iv_load_policy: 3,
       modestbranding: 1,
       rel:       0,
-      start:     3179,  // start at the timestamp from the URL
     },
     events:{
       onReady: onPlayerReady,
@@ -3097,11 +3183,16 @@ function onYouTubeIframeAPIReady(){
 function onPlayerReady(e){
   musicReady = true;
   e.target.setVolume(musicVolume);
-  // Auto-start music silently
   e.target.playVideo();
-  setTimeout(()=>{
-    updateMusicUI(true);
-  }, 1000);
+  // Start muted (browser autoplay policy), show muted icon
+  musicMuted = true;
+  const icon = document.querySelector('.mc-vol-icon');
+  if(icon) icon.textContent = '🔇';
+  const slider = document.getElementById('vol-slider');
+  if(slider){ slider.value = musicVolume; }
+  setTimeout(()=>{ updateMusicUI(true); }, 800);
+  // Show a hint toast that music is muted
+  setTimeout(()=>{ toast('🎵 Music playing — click OST to unmute','ok'); }, 2000);
 }
 
 function onPlayerStateChange(e){
@@ -3158,8 +3249,14 @@ function toggleMute(){
   if(!musicReady) return;
   musicMuted = !musicMuted;
   const icon = document.querySelector('.mc-vol-icon');
-  if(musicMuted){ ytPlayer.mute(); if(icon) icon.textContent='🔇'; }
-  else { ytPlayer.unMute(); if(icon) icon.textContent='🔊'; }
+  if(musicMuted){
+    ytPlayer.mute();
+    if(icon) icon.textContent='🔇';
+  } else {
+    ytPlayer.unMute();
+    ytPlayer.setVolume(musicVolume);
+    if(icon) icon.textContent='🔊';
+  }
 }
 
 function setVolume(v){

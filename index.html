@@ -1802,6 +1802,7 @@ input[type=range]#vol-slider::-moz-range-thumb{
 
 
 
+
 /* ══════════════════════════════════════════════════════════
    DATA
 ══════════════════════════════════════════════════════════ */
@@ -3867,6 +3868,13 @@ function setBgImage(screenId) {
 //   Upload your MP3 as "ost.mp3" to your repo root
 //   Then set: const MUSIC_SRC = 'ost.mp3';  // Upload ost.mp3 to your GitHub repo root
 
+let _audio = null;
+let musicReady = false;
+let musicPlaying = false;
+let musicPanelOpen = false;
+let musicVolume = 40;
+let musicMuted = false;
+
 function _getAudio(){
   if(!_audio){
     _audio = new Audio();
@@ -4086,6 +4094,7 @@ function deleteDeck(i){
   new MutationObserver(fix).observe(document.body,{childList:true,subtree:false});
   setInterval(fix,3000);
 })();
+
 
 
 

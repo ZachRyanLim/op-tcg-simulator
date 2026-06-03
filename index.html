@@ -1066,7 +1066,9 @@ label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;
   border-radius:50%;width:32px;height:32px;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;font-size:13px;transition:all .15s;flex-shrink:0;
+  color:var(--tx);font-family:inherit;outline:none;
 }
+.mc-btn:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25)}
 .mc-btn:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25)}
 .mc-btn.active{background:rgba(245,200,66,.2);border-color:var(--gold)}
 .mc-vol-row{display:flex;align-items:center;gap:8px}
@@ -1786,6 +1788,7 @@ input[type=range]#vol-slider::-moz-range-thumb{
 
 
 <script>
+
 
 
 
@@ -3866,7 +3869,10 @@ function setBgImage(screenId) {
 // ── SET YOUR MP3 URL HERE ──
 // Option 1: File in your GitHub repo (recommended)
 //   Upload your MP3 as "ost.mp3" to your repo root
-//   Then set: const MUSIC_SRC = 'ost.mp3';  // Upload ost.mp3 to your GitHub repo root
+//   Then set: // PRIMARY: Upload ost.mp3 to your GitHub repo root folder
+// FALLBACK: Uses a public domain track if ost.mp3 not found
+const MUSIC_SRC = 'ost.mp3';
+const MUSIC_FALLBACK_SRC = 'https://archive.org/download/TubaMultiplication/tubamultiplication_01_ewing.mp3';
 
 let _audio = null;
 let musicReady = false;
@@ -3889,10 +3895,16 @@ function _getAudio(){
     _audio.addEventListener('pause',()=>{ musicPlaying=false; updateMusicUI(false); });
     _audio.addEventListener('ended',()=>{ _audio.currentTime=0; _audio.play(); });
     _audio.addEventListener('error', ()=>{
-      console.warn('ost.mp3 not found. Upload ost.mp3 to your GitHub repo root folder.');
-      updateMusicUI(false);
-      const track = document.getElementById('mc-track');
-      if(track) track.textContent = 'No audio — add ost.mp3 to repo';
+      if(_audio.src.indexOf('ost.mp3') !== -1){
+        console.warn('ost.mp3 not found, trying fallback...');
+        _audio.src = MUSIC_FALLBACK_SRC;
+        _audio.load();
+        const track = document.getElementById('mc-track');
+        if(track) track.textContent = 'One Piece OST (fallback)';
+      } else {
+        console.warn('Audio failed to load.');
+        updateMusicUI(false);
+      }
     });
     _audio.load();
   }
@@ -4094,6 +4106,7 @@ function deleteDeck(i){
   new MutationObserver(fix).observe(document.body,{childList:true,subtree:false});
   setInterval(fix,3000);
 })();
+
 
 
 
@@ -4432,13 +4445,13 @@ function deleteDeck(i){
       <div class="mc-track" id="mc-track">Grand Line Radio</div>
     </div>
     <div class="mc-row">
-      <div class="mc-btn" onclick="musicPrev()" title="Previous">⏮</div>
-      <div class="mc-btn active" id="mc-play-btn" onclick="togglePlay()" title="Play/Pause">▶</div>
-      <div class="mc-btn" onclick="musicNext()" title="Next">⏭</div>
-      <div class="mc-btn" id="mc-shuffle-btn" onclick="toggleShuffle()" title="Shuffle" style="font-size:11px">🔀</div>
+      <button class="mc-btn" onclick="musicPrev()" title="Previous">⏮</button>
+      <button class="mc-btn active" id="mc-play-btn" onclick="togglePlay()" title="Play/Pause">▶</button>
+      <button class="mc-btn" onclick="musicNext()" title="Next">⏭</button>
+      <button class="mc-btn" id="mc-shuffle-btn" onclick="toggleShuffle()" title="Shuffle" style="font-size:11px">🔀</button>
     </div>
     <div class="mc-vol-row">
-      <span class="mc-vol-icon" onclick="toggleMute()">🔇</span>
+      <button class="mc-vol-icon" onclick="toggleMute()" style="background:none;border:none;cursor:pointer;padding:0;font-size:13px;color:var(--tx2)">🔇</button>
       <input type="range" id="vol-slider" min="0" max="100" value="40" oninput="setVolume(this.value)">
       <span class="mc-vol-pct" id="vol-pct">40%</span>
     </div>

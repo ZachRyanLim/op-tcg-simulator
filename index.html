@@ -1258,6 +1258,39 @@ input[type=range]#vol-slider::-moz-range-thumb{
 }
 .don-hint.show{display:block}
 
+
+/* ── PVP Deck Selection ── */
+.pvp-deck-tabs{
+  display:flex;gap:0;
+  background:rgba(255,255,255,.05);border-radius:var(--r);
+  padding:3px;margin-bottom:10px;
+}
+.pvp-dtab{
+  flex:1;padding:7px 8px;border:none;border-radius:5px;
+  background:transparent;color:var(--tx2);
+  font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .15s;
+}
+.pvp-dtab.active{background:var(--bg2);color:var(--tx);box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.pvp-saved-list{
+  display:flex;flex-direction:column;gap:6px;
+  max-height:160px;overflow-y:auto;
+  padding:2px 0;
+}
+.pvp-deck-opt{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:var(--r);
+  border:1px solid var(--bdr);background:rgba(255,255,255,.03);
+  cursor:pointer;transition:all .15s;
+}
+.pvp-deck-opt:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06)}
+.pvp-deck-opt.selected{border-color:var(--gold);background:rgba(245,200,66,.08)}
+.pvp-deck-opt-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.pvp-deck-opt-name{font-size:13px;font-weight:800;color:var(--tx);flex:1}
+.pvp-deck-opt-meta{font-size:11px;color:var(--tx3)}
+.pvp-deck-opt-check{color:var(--gold);font-weight:900;font-size:14px;margin-left:auto}
+.pvp-no-decks{font-size:12px;color:var(--tx3);text-align:center;padding:16px;font-style:italic}
+
 </style>
 </head>
 <body>
@@ -1506,12 +1539,29 @@ input[type=range]#vol-slider::-moz-range-thumb{
       <!-- Create room -->
       <div>
         <div class="ep-section-title" style="margin-bottom:10px">🏴‍☠️ Create a Room</div>
-        <div class="frow" style="margin-bottom:10px">
-          <label>Your Leader</label>
-          <select class="inp" id="pvp-host-ldr">
-          </select>
+
+        <!-- Deck source tabs -->
+        <div class="pvp-deck-tabs" id="pvp-host-deck-tabs">
+          <button class="pvp-dtab active" onclick="pvpDeckTab('host','prebuilt',this)">📦 Pre-built</button>
+          <button class="pvp-dtab" onclick="pvpDeckTab('host','saved',this)">🃏 My Decks</button>
         </div>
-        <button class="btn btn-primary" style="width:100%" onclick="createPVPRoom()">Create Room &amp; Get Code</button>
+
+        <!-- Pre-built: just pick leader -->
+        <div id="pvp-host-prebuilt-panel">
+          <div class="frow" style="margin-bottom:10px">
+            <label>Your Leader</label>
+            <select class="inp" id="pvp-host-ldr"></select>
+          </div>
+        </div>
+
+        <!-- Saved decks panel -->
+        <div id="pvp-host-saved-panel" style="display:none">
+          <div id="pvp-host-deck-list" class="pvp-saved-list">
+            <div class="pvp-no-decks">No saved decks yet — build one in Deck Builder!</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="createPVPRoom()">Create Room &amp; Get Code</button>
         <div class="pvp-code-box" id="pvp-code-box" style="display:none;margin-top:12px">
           <div class="pvp-code" id="pvp-room-code" onclick="copyRoomCode()" title="Click to copy">——</div>
           <div class="pvp-code-hint">Share this code with your friend · Click to copy</div>
@@ -1524,10 +1574,26 @@ input[type=range]#vol-slider::-moz-range-thumb{
       <!-- Join room -->
       <div>
         <div class="ep-section-title" style="margin-bottom:10px">🔗 Join a Room</div>
-        <div class="frow" style="margin-bottom:10px">
-          <label>Your Leader</label>
-          <select class="inp" id="pvp-join-ldr">
-          </select>
+
+        <!-- Deck source tabs -->
+        <div class="pvp-deck-tabs" id="pvp-join-deck-tabs">
+          <button class="pvp-dtab active" onclick="pvpDeckTab('join','prebuilt',this)">📦 Pre-built</button>
+          <button class="pvp-dtab" onclick="pvpDeckTab('join','saved',this)">🃏 My Decks</button>
+        </div>
+
+        <!-- Pre-built -->
+        <div id="pvp-join-prebuilt-panel">
+          <div class="frow" style="margin-bottom:10px">
+            <label>Your Leader</label>
+            <select class="inp" id="pvp-join-ldr"></select>
+          </div>
+        </div>
+
+        <!-- Saved decks panel -->
+        <div id="pvp-join-saved-panel" style="display:none">
+          <div id="pvp-join-deck-list" class="pvp-saved-list">
+            <div class="pvp-no-decks">No saved decks yet — build one in Deck Builder!</div>
+          </div>
         </div>
         <div class="pvp-join-row">
           <input class="inp" id="pvp-join-code" placeholder="Enter 6-digit code" maxlength="6"
@@ -1720,6 +1786,9 @@ input[type=range]#vol-slider::-moz-range-thumb{
 
 
 <script>
+
+
+
 
 
 
@@ -3245,7 +3314,74 @@ function openPVP(){
   $i('pvp-host-status').classList.add('waiting');
   $i('pvp-join-code').value='';
   const js=$i('pvp-join-status');js.style.display='none';js.textContent='';
+  // Reset deck selections
+  pvpHostDeckMode='prebuilt'; pvpJoinDeckMode='prebuilt';
+  pvpHostSavedDeckIdx=-1; pvpJoinSavedDeckIdx=-1;
+  pvpRenderSavedDecks('host');
+  pvpRenderSavedDecks('join');
+  // Reset tabs
+  ['pvp-host-deck-tabs','pvp-join-deck-tabs'].forEach(tabsId=>{
+    const tabs=$i(tabsId);if(!tabs)return;
+    tabs.querySelectorAll('.pvp-dtab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  });
   showScreen('screen-pvp');
+}
+
+function pvpDeckTab(side, mode, btn){
+  const isHost = side==='host';
+  if(isHost) pvpHostDeckMode=mode; else pvpJoinDeckMode=mode;
+  // Update tab active state
+  const tabsEl=$i('pvp-'+side+'-deck-tabs');
+  if(tabsEl) tabsEl.querySelectorAll('.pvp-dtab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  // Show/hide panels
+  const preEl=$i('pvp-'+side+'-prebuilt-panel');
+  const savEl=$i('pvp-'+side+'-saved-panel');
+  if(preEl) preEl.style.display=mode==='prebuilt'?'':'none';
+  if(savEl) savEl.style.display=mode==='saved'?'':'none';
+  if(mode==='saved') pvpRenderSavedDecks(side);
+}
+
+function pvpRenderSavedDecks(side){
+  const listEl=$i('pvp-'+side+'-deck-list');if(!listEl)return;
+  if(!savedDecks.length){
+    listEl.innerHTML='<div class="pvp-no-decks">No saved decks yet — build one in Deck Builder!</div>';
+    return;
+  }
+  const selIdx = side==='host'?pvpHostSavedDeckIdx:pvpJoinSavedDeckIdx;
+  listEl.innerHTML = savedDecks.map((d,i)=>{
+    const ldr = LEADERS.find(l=>l.id===d.leader)||{name:d.leader||'?',color:'Red'};
+    const isSelected = selIdx===i;
+    return `<div class="pvp-deck-opt${isSelected?' selected':''}" onclick="pvpSelectDeck('${side}',${i})">
+      <div class="pvp-deck-opt-dot" style="background:${colorHex(d.color||ldr.color||'Red')}"></div>
+      <div>
+        <div class="pvp-deck-opt-name">${d.name}</div>
+        <div class="pvp-deck-opt-meta">${d.cnt||0} cards · ${ldr.name}</div>
+      </div>
+      ${isSelected?'<span class="pvp-deck-opt-check">✓</span>':''}
+    </div>`;
+  }).join('');
+}
+
+function pvpSelectDeck(side, idx){
+  if(side==='host'){ pvpHostSavedDeckIdx=idx; }
+  else { pvpJoinSavedDeckIdx=idx; }
+  pvpRenderSavedDecks(side);
+  // Auto-set leader from deck
+  const deck=savedDecks[idx];
+  if(deck&&deck.leader){
+    const ldrSel=$i('pvp-'+side+'-ldr');
+    if(ldrSel) ldrSel.value=deck.leader;
+  }
+}
+
+function pvpGetSelectedDeck(side){
+  const mode = side==='host'?pvpHostDeckMode:pvpJoinDeckMode;
+  const idx  = side==='host'?pvpHostSavedDeckIdx:pvpJoinSavedDeckIdx;
+  if(mode==='saved' && idx>=0 && idx<savedDecks.length){
+    return savedDecks[idx];
+  }
+  return null;
 }
 
 function leavePVP(){
@@ -3271,8 +3407,10 @@ function copyRoomCode(){
 }
 
 async function createPVPRoom(){
-  if(!fbDb){ toast('Sign in with Google to use PVP','err'); return; }
-  const ldrId=$i('pvp-host-ldr').value;
+  if(!fbDb){ toast('Setting up Firebase...',''); await loadFB().catch(()=>{}); }
+  if(!fbDb){ toast('Firebase unavailable — try refreshing','err'); return; }
+  const hostDeck = pvpGetSelectedDeck('host');
+  const ldrId = hostDeck ? (hostDeck.leader||$i('pvp-host-ldr').value) : $i('pvp-host-ldr').value;
   const code=genRoomCode();
   pvpRoom=code; pvpRole='host';
 
@@ -3281,7 +3419,9 @@ async function createPVPRoom(){
     await fbDb.collection('pvp_rooms').doc(code).set({
       code, host: USER.name||'Host',
       hostLeader: ldrId,
+      hostDeckCards: hostDeck ? hostDeck.cards : null,
       guestLeader: null,
+      guestDeckCards: null,
       guest: null,
       status: 'waiting',
       created: Date.now(),
@@ -3302,20 +3442,28 @@ async function createPVPRoom(){
         hs.textContent='🟢 '+data.guest+' joined! Starting game...';
         hs.classList.remove('waiting'); hs.classList.add('found');
         if(pvpUnsubscribe){ pvpUnsubscribe(); pvpUnsubscribe=null; }
-        setTimeout(()=>startPVPGame(code,'p1',ldrId,data.guestLeader,data.guest,data.seed),1200);
+        setTimeout(()=>startPVPGame(code,'p1',ldrId,data.guestLeader,data.guest,data.seed,hostDeck,data.guestDeckCards?{cards:data.guestDeckCards}:null),1200);
       }
     });
     toast('Room created! Share the code ⚓','ok');
   }catch(e){
-    toast('Error creating room: '+e.message,'err');
+    const errMsg = e.message||'';
+    if(errMsg.includes('permission') || errMsg.includes('Missing')){
+      toast('PVP blocked — update Firestore rules to allow pvp_rooms writes. See console.','err');
+      console.error('Firestore rules need updating. Set pvp_rooms to allow read,write: if true');
+    } else {
+      toast('Error creating room: '+errMsg,'err');
+    }
   }
 }
 
 async function joinPVPRoom(){
   const code=$i('pvp-join-code').value.trim().toUpperCase();
   if(code.length!==6){ toast('Enter a 6-character code','err'); return; }
-  if(!fbDb){ toast('Sign in with Google to use PVP','err'); return; }
-  const ldrId=$i('pvp-join-ldr').value;
+  if(!fbDb){ toast('Setting up Firebase...',''); await loadFB().catch(()=>{}); }
+  if(!fbDb){ toast('Firebase unavailable — try refreshing','err'); return; }
+  const guestDeck = pvpGetSelectedDeck('join');
+  const ldrId = guestDeck ? (guestDeck.leader||$i('pvp-join-ldr').value) : $i('pvp-join-ldr').value;
 
   const js=$i('pvp-join-status');
   js.style.display='block'; js.textContent='🔍 Looking for room...';
@@ -3335,15 +3483,15 @@ async function joinPVPRoom(){
     });
 
     js.textContent='✅ Joined! Starting game...'; js.className='pvp-status show found';
-    setTimeout(()=>startPVPGame(code,'p2',ldrId,data.hostLeader,data.host,snap.data().seed),1200);
+    setTimeout(()=>startPVPGame(code,'p2',ldrId,data.hostLeader,data.host,snap.data().seed,guestDeck,data.hostDeckCards?{cards:data.hostDeckCards}:null),1200);
   }catch(e){
     js.textContent='Error: '+e.message; js.className='pvp-status show error';
   }
 }
 
-function startPVPGame(code, role, myLdrId, opLdrId, opponentName, seed){
+function startPVPGame(code, role, myLdrId, opLdrId, opponentName, seed, myDeck, opDeck){
   showLoad('Sailing to Battle vs '+opponentName+'!',1400).then(()=>{
-    initPVPGame(code, role, myLdrId, opLdrId, opponentName, seed||Date.now());
+    initPVPGame(code, role, myLdrId, opLdrId, opponentName, seed||Date.now(), myDeck, opDeck);
   });
 }
 
@@ -3362,7 +3510,11 @@ function startPVPGame(code, role, myLdrId, opLdrId, opponentName, seed){
    • A shared seed ensures both clients build the same shuffled decks.
    ════════════════════════════════════════════════════════ */
 
-let pvpSeq = 0;           // action sequence counter (local)
+let pvpSeq = 0;
+var pvpHostDeckMode = 'prebuilt';  // 'prebuilt' or 'saved'
+var pvpJoinDeckMode = 'prebuilt';
+var pvpHostSavedDeckIdx = -1;
+var pvpJoinSavedDeckIdx = -1;           // action sequence counter (local)
 let pvpApplied = 0;       // highest seq applied from Firestore
 let pvpActionListener = null;  // Firestore unsubscribe fn
 let pvpMyRole = null;     // 'p1' or 'p2'
@@ -3564,7 +3716,7 @@ function applyAction(action, push=true){
 /* ══════════════════════════════════════════════════════════
    INIT PVP GAME — shared seed guarantees identical decks
    ════════════════════════════════════════════════════════ */
-function initPVPGame(roomCode, myRole, myLdrId, opLdrId, opponentName, seed){
+function initPVPGame(roomCode, myRole, myLdrId, opLdrId, opponentName, seed, myDeck, opDeck){
   CARDS.forEach(registerCard); LEADERS.forEach(registerCard);
   pvpMyRole = myRole;
   pvpRoomId = roomCode;
@@ -3576,8 +3728,31 @@ function initPVPGame(roomCode, myRole, myLdrId, opLdrId, opponentName, seed){
   const opL = LEADERS.find(l=>l.id===opLdrId)||LEADERS[0];
 
   // Build both decks deterministically from shared seed
-  function mkPvpPlayer(lDef, name, isMe, seedOff){
-    const deck = mkDeckSeeded(seed+seedOff, isMe?'p1':'p2');
+  function mkPvpPlayer(lDef, name, isMe, seedOff, savedDeckObj){
+    let deck;
+    if(savedDeckObj && savedDeckObj.cards && Object.keys(savedDeckObj.cards).length){
+      // Build deck from saved deck cards
+      deck = [];
+      let u = 0;
+      const prefix = isMe?'p1':'p2';
+      Object.entries(savedDeckObj.cards).forEach(([id,cnt])=>{
+        const base = CARDS.find(c=>c.id===id)||LEADERS.find(l=>l.id===id);
+        if(!base) return;
+        for(let i=0;i<cnt;i++){
+          const card={...base,uid:prefix+'_'+id+'_'+u++,rested:false,donAtt:0};
+          registerCard(card);deck.push(card);
+        }
+      });
+      // Pad to at least 20 cards
+      while(deck.length<20){
+        const s=CARDS[deck.length%CARDS.length];
+        const card={...s,uid:prefix+'_pad_'+u++,rested:false,donAtt:0};
+        registerCard(card);deck.push(card);
+      }
+      deck = shuffle(deck);
+    } else {
+      deck = mkDeckSeeded(seed+seedOff, isMe?'p1':'p2');
+    }
     const life = deck.splice(0,lDef.life);
     const hand = deck.splice(0,5);
     const don = Array.from({length:10},(_,i)=>({uid:(isMe?'p1':'p2')+'d'+i,on:false}));
@@ -3588,11 +3763,11 @@ function initPVPGame(roomCode, myRole, myLdrId, opLdrId, opponentName, seed){
 
   // myRole is 'p1' or 'p2' — determines turn order (p1 always goes first)
   const p1Data = myRole==='p1'
-    ? mkPvpPlayer(myL, USER.name||'You', true, 0)
-    : mkPvpPlayer(opL, opponentName, false, 1);
+    ? mkPvpPlayer(myL, USER.name||'You', true,  0, myDeck)
+    : mkPvpPlayer(opL, opponentName,    false, 1, opDeck);
   const p2Data = myRole==='p1'
-    ? mkPvpPlayer(opL, opponentName, false, 1)
-    : mkPvpPlayer(myL, USER.name||'You', true, 0);
+    ? mkPvpPlayer(opL, opponentName,    false, 1, opDeck)
+    : mkPvpPlayer(myL, USER.name||'You', true,  0, myDeck);
 
   G = {
     p1:p1Data, p2:p2Data,
@@ -3881,6 +4056,9 @@ function showTurnBanner(text, sub, color){
   new MutationObserver(fix).observe(document.body,{childList:true,subtree:false});
   setInterval(fix,3000);
 })();
+
+
+
 
 
 

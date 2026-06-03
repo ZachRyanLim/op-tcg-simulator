@@ -1727,6 +1727,9 @@ input[type=range]#vol-slider::-moz-range-thumb{
 
 
 
+
+
+
 /* ══════════════════════════════════════════════════════════
    DATA
 ══════════════════════════════════════════════════════════ */
@@ -2100,12 +2103,12 @@ function showLoad(lbl,ms=1400){
    FIREBASE (lazy — only loads when Google sign-in clicked)
 ══════════════════════════════════════════════════════════ */
 const FB_CONFIG = {
-  apiKey: "AIzaSyAGENMQEXcxJDgcya3Wt5CRzjh1xHDOkhc",
-  authDomain: "op-tcg-simulator.firebaseapp.com",
-  projectId: "op-tcg-simulator",
-  storageBucket: "op-tcg-simulator.firebasestorage.app",
-  messagingSenderId: "558424760430",
-  appId: "1:558424760430:web:c8a2840f1ba29d947b067f"
+  apiKey:"AIzaSyAGENMQEXcxJDgcya3Wt5CRzjh1xHDOkhc",
+  authDomain:"op-tcg-simulator.firebaseapp.com",
+  projectId:"op-tcg-simulator",
+  storageBucket:"op-tcg-simulator.firebasestorage.app",
+  messagingSenderId:"558424760430",
+  appId:"1:558424760430:web:c8a2840f1ba29d947b067f"
 };
 let fbDb=null,fbAuth=null,fbReady=false,fbLoading=false;
 
@@ -2126,7 +2129,14 @@ function loadFB(){
           fbAuth=firebase.auth();fbDb=firebase.firestore();fbReady=true;fbLoading=false;
           fbAuth.onAuthStateChanged(u=>{
             fbUser=u;
-            if(u){$i('sync-badge').style.display='block';loadCloudProfile(u.uid);}
+            if(u){
+              try{ $i('sync-badge').style.display='block'; }catch(e){}
+              // Only auto-navigate if still on auth screen (not already handled by signInWithGoogle)
+              const authScreen = document.getElementById('screen-auth');
+              if(authScreen && authScreen.classList.contains('active')){
+                loadCloudProfile(u.uid);
+              }
+            }
           });
           res();
         }catch(e){fbLoading=false;rej(e);}
@@ -2141,11 +2151,15 @@ async function signInWithGoogle(){
   toast('Loading Google Sign-In...');
   try{await loadFB();}catch(e){toast('Could not load Firebase — check internet.','err');return;}
   try{
-    const p=new firebase.auth.GoogleAuthProvider();
+    const p = new firebase.auth.GoogleAuthProvider();
     p.addScope('profile');
     p.setCustomParameters({prompt:'select_account'});
     const result = await fbAuth.signInWithPopup(p);
-    if(result && result.user) toast('Signed in as '+result.user.displayName,'ok');
+    if(result && result.user){
+      toast('Signed in as '+result.user.displayName,'ok');
+      // Explicitly call loadCloudProfile — don't rely solely on onAuthStateChanged
+      await loadCloudProfile(result.user.uid);
+    }
   }catch(e){
     if(e.code==='auth/popup-closed-by-user') return;
     if(e.code==='auth/popup-blocked'){
@@ -2160,24 +2174,64 @@ async function signInWithGoogle(){
 function signOut(){if(fbAuth)fbAuth.signOut();USER={name:'',xp:'beginner',lang:'English',uid:null,isGuest:true};history=[];fbUser=null;$i('sync-badge').style.display='none';showScreen('screen-auth');}
 
 async function loadCloudProfile(uid){
-  if(!fbDb)return;
+  // Guard: don't run twice if already navigated away from auth screen
+  if(document.getElementById('screen-auth') &&
+     !document.getElementById('screen-auth').classList.contains('active')){
+    return;
+  }
+  USER.uid = uid; USER.isGuest = false;
+  if(!fbDb){
+    // Firebase DB not ready — just go to profile setup
+    const u = fbAuth && fbAuth.currentUser;
+    if(u){ _setupProfileScreen(u); } else { showScreen('screen-menu'); }
+    return;
+  }
   try{
-    const doc=await fbDb.collection('users').doc(uid).get();
+    const doc = await fbDb.collection('users').doc(uid).get();
     if(doc.exists){
-      const d=doc.data();USER={...USER,...d,uid,isGuest:false};
-      updateMenuUI();
-      const snap=await fbDb.collection('users').doc(uid).collection('history').orderBy('timestamp','desc').limit(100).get();
-      history=snap.docs.map(d=>({id:d.id,...d.data()}));
-      localStorage.setItem('op_hist',JSON.stringify(history));
-      showLoad('Welcome back, '+USER.name+'!',1400).then(()=>{showScreen('screen-menu');checkUpdates();});
-    }else{
-      const u=fbAuth.currentUser;
-      if(u){$i('g-photo').src=u.photoURL||'';$i('g-photo').style.display=u.photoURL?'block':'none';
-        $i('g-name').textContent=u.displayName||'New Pirate';$i('g-email').textContent=u.email||'';
-        $i('prof-name').value=u.displayName||'';USER.uid=uid;USER.isGuest=false;
-        showScreen('screen-profile');}
+      // Returning user — load their data and go straight to menu
+      const d = doc.data();
+      USER = {...USER, ...d, uid, isGuest:false};
+      loadLocal(); // also merge local prefs
+      try{
+        const snap = await fbDb.collection('users').doc(uid)
+          .collection('history').orderBy('timestamp','desc').limit(100).get();
+        history = snap.docs.map(d=>({id:d.id,...d.data()}));
+        localStorage.setItem('op_hist', JSON.stringify(history));
+      }catch(he){ console.warn('History load failed:', he); }
+      showLoad('Welcome back, '+(USER.name||'Captain')+'!', 1400)
+        .then(()=>{ updateMenuUI(); showScreen('screen-menu'); checkUpdates(); pickRandomBg(); });
+    } else {
+      // New user — show profile setup
+      const u = fbAuth.currentUser;
+      if(u){ _setupProfileScreen(u); }
+      else { showScreen('screen-menu'); }
     }
-  }catch(e){console.warn('Cloud load failed:',e);loadLocal();}
+  }catch(e){
+    console.warn('Cloud load failed:', e);
+    // Still navigate — don't leave user stuck on auth screen
+    const u = fbAuth && fbAuth.currentUser;
+    if(u){
+      USER.name = USER.name || u.displayName || 'Captain';
+      showLoad('Welcome, '+(USER.name)+'!', 1200)
+        .then(()=>{ updateMenuUI(); showScreen('screen-menu'); checkUpdates(); });
+    }
+  }
+}
+
+function _setupProfileScreen(u){
+  try{
+    const gPhoto = $i('g-photo');
+    const gName  = $i('g-name');
+    const gEmail = $i('g-email');
+    const profName = $i('prof-name');
+    if(gPhoto){ gPhoto.src=u.photoURL||''; gPhoto.style.display=u.photoURL?'block':'none'; }
+    if(gName)  gName.textContent  = u.displayName || 'New Pirate';
+    if(gEmail) gEmail.textContent = u.email || '';
+    if(profName) profName.value   = u.displayName || '';
+  }catch(err){ console.warn('Profile screen setup:', err); }
+  USER.uid = u.uid; USER.isGuest = false;
+  showScreen('screen-profile');
 }
 
 async function saveToCloud(uid,data){
@@ -3817,6 +3871,9 @@ function showTurnBanner(text, sub, color){
   new MutationObserver(fix).observe(document.body,{childList:true,subtree:false});
   setInterval(fix,3000);
 })();
+
+
+
 
 
 

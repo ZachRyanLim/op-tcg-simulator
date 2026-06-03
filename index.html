@@ -1092,17 +1092,17 @@ input[type=range]#vol-slider::-moz-range-thumb{
 ════════════════════════════════════════ */
 #gear-btn{
   position:fixed;
-  top:10px; left:10px;
+  bottom:28px; left:14px;
   z-index:8500;
-  width:36px; height:36px;
+  width:42px; height:42px;
   border-radius:50%;
-  background:rgba(7,9,15,.82);
-  border:1px solid rgba(255,255,255,.12);
+  background:rgba(7,9,15,.85);
+  border:1px solid rgba(255,255,255,.14);
   display:flex; align-items:center; justify-content:center;
-  font-size:17px; cursor:pointer;
+  font-size:20px; cursor:pointer;
   backdrop-filter:blur(10px);
   transition:all .2s;
-  box-shadow:0 2px 10px rgba(0,0,0,.4);
+  box-shadow:0 3px 14px rgba(0,0,0,.5);
   user-select:none;
 }
 #gear-btn:hover{
@@ -1786,6 +1786,7 @@ input[type=range]#vol-slider::-moz-range-thumb{
 
 
 <script>
+
 
 
 
@@ -4044,6 +4045,50 @@ function showTurnBanner(text, sub, color){
   _bannerTimer = setTimeout(()=>{ b.classList.remove('show'); }, 1800);
 }
 
+
+/* ── Deck Builder state & functions ── */
+var dbFilters = {type:'all', color:'all', affil:'all', series:'all'};
+var dbMode = 'new';
+
+function dbFilter(filterType, val, btn){
+  dbFilters[filterType] = val;
+  document.querySelectorAll('[data-ftype="'+filterType+'"]').forEach(function(el){
+    el.classList.remove('active');
+  });
+  if(btn) btn.classList.add('active');
+  renderBrowser();
+}
+
+function dbSwitchMode(mode){
+  dbMode = mode;
+  var t1=$i('db-tab-new'), t2=$i('db-tab-saved');
+  var p1=$i('db-pane-new'), p2=$i('db-pane-saved');
+  if(t1) t1.classList.toggle('active', mode==='new');
+  if(t2) t2.classList.toggle('active', mode==='saved');
+  if(p1) p1.classList.toggle('hidden', mode!=='new');
+  if(p2) p2.classList.toggle('hidden', mode!=='saved');
+  if(mode==='saved') renderSavedDecks();
+}
+
+function openDeckBuilder(){
+  var sel = $i('deck-ldr');
+  if(sel) sel.innerHTML = LEADERS.map(function(l){
+    return '<option value="'+l.id+'">'+l.name+' — '+l.series+' ('+l.color+')</option>';
+  }).join('');
+  showScreen('screen-deckbuilder');
+  renderBrowser();
+  renderDeckList();
+  renderSavedDecks();
+}
+
+function deleteDeck(i){
+  if(!confirm('Delete this deck?')) return;
+  savedDecks.splice(i,1);
+  localStorage.setItem('op_decks', JSON.stringify(savedDecks));
+  renderSavedDecks();
+  toast('Deck deleted','ok');
+}
+
 (function(){
   const TXT='⚓ Created by: zlim ⚓';
   const STY='position:fixed;bottom:8px;right:10px;z-index:9999;pointer-events:none;user-select:none;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;color:rgba(255,255,255,.65);white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,.9)';
@@ -4056,6 +4101,7 @@ function showTurnBanner(text, sub, color){
   new MutationObserver(fix).observe(document.body,{childList:true,subtree:false});
   setInterval(fix,3000);
 })();
+
 
 
 

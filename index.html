@@ -1085,8 +1085,6 @@ input[type=range]#vol-slider::-moz-range-thumb{
   width:12px;height:12px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;
 }
 .mc-vol-pct{font-size:10px;color:var(--tx3);font-weight:700;width:28px;text-align:right;flex-shrink:0}
-/* Hidden YouTube iframe */
-#yt-iframe{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px}
 
 
 /* ════════════════════════════════════════
@@ -1728,6 +1726,7 @@ input[type=range]#vol-slider::-moz-range-thumb{
 
 
 
+
 /* ══════════════════════════════════════════════════════════
    DATA
 ══════════════════════════════════════════════════════════ */
@@ -2101,13 +2100,7 @@ function showLoad(lbl,ms=1400){
    FIREBASE (lazy — only loads when Google sign-in clicked)
 ══════════════════════════════════════════════════════════ */
 const FB_CONFIG = {
-  apiKey: "AIzaSyAZk8K51XrDZo7dJoyvHufFOrFFP1NKEKs",
-  authDomain: "optcg-simulator.firebaseapp.com",
-  projectId: "optcg-simulator",
-  storageBucket: "optcg-simulator.firebasestorage.app",
-  messagingSenderId: "27791747383",
-  appId: "1:27791747383:web:e416e5e88bf344de8152b2",
-  measurementId: "G-04DZRM4L0P"
+  
 };
 let fbDb=null,fbAuth=null,fbReady=false,fbLoading=false;
 
@@ -3618,207 +3611,127 @@ function setBgImage(screenId) {
 
 
 /* ════════════════════════════════════════
-   MUSIC PLAYER — YouTube IFrame API
-   Playlist: hVu5_LL7iHk (One Piece OST)
+   MUSIC PLAYER — HTML5 Audio
+   Host your MP3 at: music/ost.mp3 in your GitHub repo
+   OR set MUSIC_SRC to any direct MP3 URL
 ════════════════════════════════════════ */
-let ytPlayer = null;
+
+// ── SET YOUR MP3 URL HERE ──
+// Option 1: File in your GitHub repo (recommended)
+//   Upload your MP3 as "ost.mp3" to your repo root
+//   Then set: const MUSIC_SRC = 'ost.mp3';
+// Option 2: Any direct MP3 URL
+//   const MUSIC_SRC = 'https://yourdomain.com/music.mp3';
+const MUSIC_SRC = 'ost.mp3';
+
+// Fallback tracks (royalty-free One Piece style) — direct MP3 CDN links
+const MUSIC_FALLBACKS = [
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // placeholder
+];
+
+let _audio = null;
 let musicReady = false;
 let musicPlaying = false;
 let musicPanelOpen = false;
 let musicVolume = 40;
 let musicMuted = false;
-let musicShuffle = false;
 
-// Load YouTube IFrame API
-// YouTube API loaded lazily when music panel first opened
-function loadYTAPI(){
-  if(document.getElementById('yt-api-script')) return;
-  const s = document.createElement('script');
-  s.id = 'yt-api-script';
-  s.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(s);
-}
-
-// Called by YouTube API when ready
-function onYouTubeIframeAPIReady(){
-  const container = document.getElementById('yt-iframe');
-  ytPlayer = new YT.Player(container, {
-    height:'1',
-    width:'1',
-    videoId:'hVu5_LL7iHk',
-    playerVars:{
-      autoplay:  1,
-      mute:      1,
-      loop:      1,
-      playlist:  'hVu5_LL7iHk',
-      controls:  0,
-      disablekb: 1,
-      fs:        0,
-      iv_load_policy: 3,
-      modestbranding: 1,
-      rel:       0,
-      origin:    window.location.origin,
-    },
-    events:{
-      onReady: onPlayerReady,
-      onStateChange: onPlayerStateChange,
-      onError: onPlayerError,
-    }
-  });
-}
-
-function onPlayerReady(e){
-  musicReady = true;
-  e.target.setVolume(musicVolume);
-  e.target.playVideo();
-  // Start muted (browser autoplay policy), show muted icon
-  musicMuted = true;
-  const icon = document.querySelector('.mc-vol-icon');
-  if(icon) icon.textContent = '🔇';
-  const slider = document.getElementById('vol-slider');
-  if(slider){ slider.value = musicVolume; }
-  setTimeout(()=>{ updateMusicUI(true); }, 800);
-  // Show a hint toast that music is muted
-  setTimeout(()=>{ toast('🎵 Music playing — click OST to unmute','ok'); }, 2000);
-}
-
-function onPlayerStateChange(e){
-  const YT = window.YT || {};
-  const playing = e.data === 1; // YT.PlayerState.PLAYING
-  musicPlaying = playing;
-  updateMusicUI(playing);
-  // Update track name if possible
-  try {
-    const title = ytPlayer.getVideoData().title;
-    if(title) setH('mc-track', title);
-  } catch(err){}
-}
-
-function onPlayerError(e){
-  console.warn('YT player error:', e.data);
-  // Try next video on error
-  setTimeout(()=>{ try{ ytPlayer.nextVideo(); }catch(err){} }, 1000);
-}
-
-function updateMusicUI(playing){
-  const icon  = document.getElementById('music-icon');
-  const label = document.getElementById('music-label');
-  const btn   = document.getElementById('mc-play-btn');
-  if(icon)  { icon.textContent = playing ? '🎵' : '🎵'; icon.className = playing ? 'playing' : ''; }
-  if(label) { label.textContent = playing ? 'OST ♪' : 'OST'; label.className = playing ? 'playing' : ''; }
-  if(btn)   { btn.textContent = playing ? '⏸' : '▶'; btn.classList.toggle('active', playing); }
-}
-
-function togglePlay(){
-  if(!musicReady) return;
-  if(musicPlaying){ ytPlayer.pauseVideo(); }
-  else { ytPlayer.playVideo(); }
-}
-
-function musicNext(){
-  if(!musicReady) return;
-  try{ ytPlayer.nextVideo(); }catch(e){}
-}
-
-function musicPrev(){
-  if(!musicReady) return;
-  try{ ytPlayer.previousVideo(); }catch(e){}
-}
-
-function toggleShuffle(){
-  musicShuffle = !musicShuffle;
-  const btn = document.getElementById('mc-shuffle-btn');
-  if(btn) btn.classList.toggle('active', musicShuffle);
-  if(musicReady){ try{ ytPlayer.setShuffle(musicShuffle); }catch(e){} }
-}
-
-function toggleMute(){
-  if(!musicReady) return;
-  musicMuted = !musicMuted;
-  const icon = document.querySelector('.mc-vol-icon');
-  if(musicMuted){
-    ytPlayer.mute();
-    if(icon) icon.textContent='🔇';
-  } else {
-    ytPlayer.unMute();
-    ytPlayer.setVolume(musicVolume);
-    if(icon) icon.textContent='🔊';
+function _getAudio(){
+  if(!_audio){
+    _audio = new Audio();
+    _audio.loop = true;
+    _audio.volume = musicVolume / 100;
+    _audio.src = MUSIC_SRC;
+    _audio.addEventListener('canplay', ()=>{
+      musicReady = true;
+      updateMusicUI(false);
+    });
+    _audio.addEventListener('play', ()=>{ musicPlaying=true; updateMusicUI(true); });
+    _audio.addEventListener('pause',()=>{ musicPlaying=false; updateMusicUI(false); });
+    _audio.addEventListener('ended',()=>{ _audio.currentTime=0; _audio.play(); });
+    _audio.addEventListener('error', ()=>{
+      console.warn('Music src failed, trying fallback...');
+      if(MUSIC_FALLBACKS.length){
+        _audio.src = MUSIC_FALLBACKS[0];
+        _audio.load();
+      }
+    });
+    _audio.load();
   }
-}
-
-function setVolume(v){
-  musicVolume = parseInt(v);
-  const pct = document.getElementById('vol-pct');
-  if(pct) pct.textContent = v+'%';
-  if(musicReady){ try{ ytPlayer.setVolume(musicVolume); }catch(e){} }
-  // Unmute if adjusting volume
-  if(musicMuted && musicVolume > 0){
-    musicMuted = false;
-    const icon = document.querySelector('.mc-vol-icon');
-    if(icon) icon.textContent = '🔊';
-  }
+  return _audio;
 }
 
 function toggleMusicPanel(){
   musicPanelOpen = !musicPanelOpen;
   const panel = document.getElementById('music-controls');
   if(panel) panel.classList.toggle('open', musicPanelOpen);
-  // Load YT API first time panel is opened
-  if(musicPanelOpen && !ytPlayer){
-    loadYTAPI();
-    // onYouTubeIframeAPIReady called automatically by YT API when loaded
+  // Init audio on first open (requires user gesture)
+  _getAudio();
+}
+
+function togglePlay(){
+  const a = _getAudio();
+  if(musicPlaying){ a.pause(); }
+  else {
+    a.play().catch(e=>{
+      console.warn('Audio play failed:', e);
+      gameNotify('Click the OST button to start music','info');
+    });
   }
 }
 
-// Close panel when clicking outside
-document.addEventListener('click', function(e){
-  const player = document.getElementById('music-player');
-  if(player && !player.contains(e.target) && musicPanelOpen){
-    musicPanelOpen = false;
-    const panel = document.getElementById('music-controls');
-    if(panel) panel.classList.remove('open');
+function musicNext(){
+  const a = _getAudio();
+  // For single-file: restart
+  a.currentTime = 0;
+  if(!musicPlaying) a.play();
+}
+
+function musicPrev(){
+  const a = _getAudio();
+  a.currentTime = 0;
+  if(!musicPlaying) a.play();
+}
+
+function toggleShuffle(){ /* no-op for single file */ }
+
+function toggleMute(){
+  const a = _getAudio();
+  musicMuted = !musicMuted;
+  a.muted = musicMuted;
+  const icon = document.querySelector('.mc-vol-icon');
+  if(icon) icon.textContent = musicMuted ? '🔇' : '🔊';
+}
+
+function setVolume(v){
+  musicVolume = parseInt(v);
+  const pct = document.getElementById('vol-pct');
+  if(pct) pct.textContent = v+'%';
+  const a = _getAudio();
+  a.volume = musicVolume / 100;
+  if(musicMuted && musicVolume > 0){
+    musicMuted = false;
+    a.muted = false;
+    const icon = document.querySelector('.mc-vol-icon');
+    if(icon) icon.textContent = '🔊';
   }
-});
-
-
-/* ── Deck Builder new functions ── */
-var dbFilters = {type:'all', color:'all', affil:'all', series:'all'};
-var dbMode = 'new';
-
-function dbFilter(filterType, val, btn){
-  dbFilters[filterType] = val;
-  document.querySelectorAll('[data-ftype="'+filterType+'"]').forEach(function(el){
-    el.classList.remove('active');
-  });
-  if(btn) btn.classList.add('active');
-  renderBrowser();
 }
 
-function dbSwitchMode(mode){
-  dbMode = mode;
-  var t1=$i('db-tab-new'),t2=$i('db-tab-saved'),p1=$i('db-pane-new'),p2=$i('db-pane-saved');
-  if(t1)t1.classList.toggle('active',mode==='new');
-  if(t2)t2.classList.toggle('active',mode==='saved');
-  if(p1)p1.classList.toggle('hidden',mode!=='new');
-  if(p2)p2.classList.toggle('hidden',mode!=='saved');
-  if(mode==='saved')renderSavedDecks();
+function updateMusicUI(playing){
+  musicPlaying = playing;
+  const icon  = document.getElementById('music-icon');
+  const label = document.getElementById('music-label');
+  const btn   = document.getElementById('mc-play-btn');
+  const track = document.getElementById('mc-track');
+  if(icon)  icon.className = playing ? 'playing' : '';
+  if(label) { label.textContent = playing ? 'OST ♪' : 'OST'; label.className = playing ? 'playing' : ''; }
+  if(btn)   { btn.textContent = playing ? '⏸' : '▶'; btn.classList.toggle('active', playing); }
+  if(track) track.textContent = playing ? 'One Piece OST — Playing' : 'Click ▶ to play';
 }
 
-function openDeckBuilder(){
-  var sel=$i('deck-ldr');
-  if(sel)sel.innerHTML=LEADERS.map(function(l){
-    return '<option value="'+l.id+'">'+l.name+' — '+l.series+' ('+l.color+')</option>';
-  }).join('');
-  showScreen('screen-deckbuilder');
-  renderBrowser();renderDeckList();renderSavedDecks();
-}
-
-function deleteDeck(i){
-  if(!confirm('Delete this deck?'))return;
-  savedDecks.splice(i,1);
-  localStorage.setItem('op_decks',JSON.stringify(savedDecks));
-  renderSavedDecks();toast('Deck deleted','ok');
-}
+// Remove old YouTube stubs
+function onYouTubeIframeAPIReady(){}
+function loadYTAPI(){}
 
 
 /* ════════════════════════════════════════
@@ -3899,6 +3812,7 @@ function showTurnBanner(text, sub, color){
   new MutationObserver(fix).observe(document.body,{childList:true,subtree:false});
   setInterval(fix,3000);
 })();
+
 
 
 
@@ -4238,7 +4152,6 @@ function showTurnBanner(text, sub, color){
     </div>
   </div>
 </div>
-<div id="yt-iframe"></div>
 
 </body>
 </html>
